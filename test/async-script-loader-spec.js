@@ -24,11 +24,15 @@ describe("AsyncScriptLoader", () => {
     assert.ok(ReactTestUtils.isCompositeComponentWithType(instance, ComponentWrapper));
     assert.isNotNull(ReactTestUtils.findRenderedComponentWithType(instance, MockedComponent));
   });
-  it("should unmount successfully", () => {
-    let ComponentWrapper = makeAsyncScriptLoader(MockedComponent, "http://example.com");
+  it("should handle successfully already loaded global object", () => {
+    let globalName = "SomeGlobal";
+    window[globalName] = {};
+    let ComponentWrapper = makeAsyncScriptLoader(MockedComponent, "http://example.com", { globalName: globalName });
     let instance = ReactTestUtils.renderIntoDocument(
       <ComponentWrapper />
     );
-    React.unmountComponentAtNode(document);
+    React.unmountComponentAtNode(instance.getDOMNode());
+    instance.componentWillUnmount();
+    delete window[globalName];
   });
 });

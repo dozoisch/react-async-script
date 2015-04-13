@@ -1,5 +1,8 @@
 # History
 
+## 0.2.2
+- Fix instanciation when global object already exists
+
 ## 0.2.1
 - Put runtime in deps and not dev-deps
 
