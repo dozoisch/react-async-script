@@ -79,7 +79,7 @@ export default function makeAsyncScript(Component, scriptURL, options) {
 
           for (let [obsKey, observer] of observersMap) {
             if (func(observer)) {
-              delete observersMap[obsKey];
+              observersMap.delete(obsKey);
             }
           }
         }
@@ -132,7 +132,7 @@ export default function makeAsyncScript(Component, scriptURL, options) {
       // Clean the observer entry
       let mapEntry = SCRIPT_MAP.get(scriptURL);
       if (mapEntry) {
-        delete mapEntry.observers[this.getScriptLoaderID()];
+        mapEntry.observers.delete(this.getScriptLoaderID());
       }
     },
 
