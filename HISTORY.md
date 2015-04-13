@@ -1,5 +1,8 @@
 # History
 
+## 0.2.0
+- Back to es6 Map
+
 ## 0.1.2
 - Added a small test
 - Added some badges
