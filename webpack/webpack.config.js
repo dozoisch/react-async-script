@@ -22,13 +22,13 @@ export default (options) => {
 
   const config = {
     entry: {
-      "ReCAPTCHA": "./src/recaptcha.jsx"
+      "AsyncScriptLoader": "./src/async-script-loader.js"
     },
 
     output: {
       path: "./dist",
       filename: "[name].js",
-      library: "ReCAPTCHA",
+      library: "AsyncScriptLoader",
       libraryTarget: "umd",
     },
 

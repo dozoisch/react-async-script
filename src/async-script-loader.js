@@ -1,7 +1,7 @@
 "use strict";
 import React, { PropTypes } from "react";
 
-let SCRIPT_MAP = new Map();
+let SCRIPT_MAP = {};
 
 // A counter used to generate a unique id for each component that uses
 // ScriptLoaderMixin.
@@ -17,14 +17,13 @@ export default function makeAsyncScript(Component, scriptURL, options) {
 
     statics: {
       triggerOnScriptLoaded() {
-        let mapEntry = SCRIPT_MAP.get(scriptURL);
+        let mapEntry = SCRIPT_MAP[scriptURL];
         if (!mapEntry || !mapEntry.loaded) {
           throw new Error("Script is not loaded.");
         }
-       for (let observer of mapEntry.observers.values()) {
-          observer(mapEntry);
-        }
-
+        Object.keys(mapEntry.observers).forEach((obsKey) => {
+          mapEntry.observers[obsKey](mapEntry);
+        });
         delete window[options.callbackName];
       },
     },
@@ -48,25 +47,25 @@ export default function makeAsyncScript(Component, scriptURL, options) {
       const key = this.getScriptLoaderID();
       const { globalName, callbackName, } = options;
       if (globalName && typeof window[globalName] !== "undefined") {
-        SCRIPT_MAP.set(scriptURL, { loaded: true });
+        SCRIPT_MAP[scriptURL] = { loaded: true };
       }
 
-      if (SCRIPT_MAP.has(scriptURL)) {
-        let entry = SCRIPT_MAP.get(scriptURL);
+      if (SCRIPT_MAP[scriptURL]) {
+        let entry = SCRIPT_MAP[scriptURL];
         if (entry.loaded || entry.errored) {
           this.handleLoad(entry);
           return;
         }
-        entry.observers.set(key, this.handleLoad.bind(this));
+        entry.observers[key] = this.handleLoad;
         return;
       }
 
       let observers = new Map();
-      observers.set(key, this.handleLoad.bind(this));
-      SCRIPT_MAP.set(scriptURL, {
+      observers[key] = this.handleLoad;
+      SCRIPT_MAP[scriptURL] = {
         loaded: false,
         observers: observers,
-      });
+      };
 
       let script = document.createElement("script");
 
@@ -74,11 +73,13 @@ export default function makeAsyncScript(Component, scriptURL, options) {
       script.async = 1;
 
       let callObserverFuncAndRemoveObserver = (func) => {
-        let mapEntry = SCRIPT_MAP.get(scriptURL);
-        let observersMap = mapEntry ? mapEntry.observers : new Map();
-        observersMap.forEach( (obsKey, observer) => {
+        let mapEntry = SCRIPT_MAP[scriptURL];
+        let observersMap = mapEntry ? mapEntry.observers : {};
+
+        Object.keys(observersMap).forEach( (obsKey) => {
+          let observer = observersMap[obsKey];
           if (func(observer)) {
-            observersMap.delete(obsKey);
+            delete observersMap[obsKey];
           }
         });
       };
@@ -88,7 +89,7 @@ export default function makeAsyncScript(Component, scriptURL, options) {
       }
 
       script.onload = () => {
-        let mapEntry = SCRIPT_MAP.get(scriptURL);
+        let mapEntry = SCRIPT_MAP[scriptURL];
         mapEntry.loaded = true;
         callObserverFuncAndRemoveObserver( (observer) => {
           if (callbackName) {
@@ -99,7 +100,7 @@ export default function makeAsyncScript(Component, scriptURL, options) {
         });
       };
       script.onerror = (event) => {
-        let mapEntry = SCRIPT_MAP.get(scriptURL);
+        let mapEntry = SCRIPT_MAP[scriptURL];
         mapEntry.errored = true;
         callObserverFuncAndRemoveObserver( (observer) => {
           observer(mapEntry);
@@ -112,7 +113,7 @@ export default function makeAsyncScript(Component, scriptURL, options) {
         if (this.readyState === "loaded") {
           // wait for other events, then call onload if default onload hadn't been called
           window.setTimeout(() => {
-            if (SCRIPT_MAP.get(scriptURL).loaded !== true) {
+            if (SCRIPT_MAP[scriptURL].loaded !== true) {
               script.onload();
             }
           }, 0);
@@ -128,9 +129,9 @@ export default function makeAsyncScript(Component, scriptURL, options) {
 
     componentWillUnmount() {
       // Clean the observer entry
-      let mapEntry = SCRIPT_MAP.get(scriptURL);
+      let mapEntry = SCRIPT_MAP[scriptURL];
       if (mapEntry) {
-        mapEntry.observers.delete(this.getScriptLoaderID());
+        delete mapEntry.observers[this.getScriptLoaderID()];
       }
     },
 
