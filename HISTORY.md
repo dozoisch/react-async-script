@@ -1,5 +1,10 @@
 # History
 
+## 0.1.2
+- Added a small test
+- Added some badges
+- small fixes
+
 ## 0.1.1
 - reverted es6 map back to plain object
 
