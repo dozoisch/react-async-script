@@ -1,5 +1,8 @@
 # History
 
+## 0.2.1
+- Put runtime in deps and not dev-deps
+
 ## 0.2.0
 - Back to es6 Map
 
