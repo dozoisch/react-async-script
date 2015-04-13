@@ -8,6 +8,7 @@ let SCRIPT_MAP = {};
 let idCount = 0;
 
 export default function makeAsyncScript(Component, scriptURL, options) {
+  options = options || {};
   const AsyncScriptLoader = React.createClass({
     displayName: "AsyncScriptLoader",
 
@@ -60,7 +61,7 @@ export default function makeAsyncScript(Component, scriptURL, options) {
         return;
       }
 
-      let observers = new Map();
+      let observers = {};
       observers[key] = this.handleLoad;
       SCRIPT_MAP[scriptURL] = {
         loaded: false,
@@ -84,7 +85,7 @@ export default function makeAsyncScript(Component, scriptURL, options) {
         });
       };
 
-      if (callbackName) {
+      if (callbackName && typeof window !== "undefined") {
         window[callbackName] = AsyncScriptLoader.triggerOnScriptLoaded;
       }
 
