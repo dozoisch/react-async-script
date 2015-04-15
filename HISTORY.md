@@ -1,5 +1,8 @@
 # History
 
+## 0.3.0
+- Added a way to expose child functions
+
 ## 0.2.2
 - Fix instanciation when global object already exists
 
