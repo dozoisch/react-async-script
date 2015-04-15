@@ -22,7 +22,7 @@ export default (options) => {
 
   const config = {
     entry: {
-      "AsyncScriptLoader": "./src/async-script-loader.js"
+      AsyncScriptLoader: "./src/async-script-loader.js"
     },
 
     output: {
@@ -34,7 +34,7 @@ export default (options) => {
 
     externals: [
       {
-        "react": {
+        react: {
           root: "React",
           commonjs2: "react",
           commonjs: "react",
@@ -52,7 +52,7 @@ export default (options) => {
     plugins: [
       new webpack.DefinePlugin({
         "process.env": {
-          "NODE_ENV": JSON.stringify(environment),
+          NODE_ENV: JSON.stringify(environment),
         },
       })
     ],

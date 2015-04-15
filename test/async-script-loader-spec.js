@@ -5,6 +5,12 @@ import makeAsyncScriptLoader from "../src/async-script-loader";
 
 const MockedComponent = React.createClass({
   displayName: "MockedComponent",
+
+  callsACallback(fn) {
+    assert.equal(this.constructor.displayName, "MockedComponent");
+    fn();
+  },
+
   render() {
     return <span/>;
   }
@@ -34,5 +40,15 @@ describe("AsyncScriptLoader", () => {
     React.unmountComponentAtNode(instance.getDOMNode());
     instance.componentWillUnmount();
     delete window[globalName];
+  });
+
+  it("should expose functions with scope correctly", (done) => {
+    let ComponentWrapper = makeAsyncScriptLoader(MockedComponent, "http://example.com", {
+      exposeFuncs: ["callsACallback"]
+    });
+    let instance = ReactTestUtils.renderIntoDocument(
+      <ComponentWrapper />
+    );
+    instance.callsACallback(done);
   });
 });

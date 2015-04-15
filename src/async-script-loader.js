@@ -8,15 +8,15 @@ let idCount = 0;
 
 export default function makeAsyncScript(Component, scriptURL, options) {
   options = options || {};
-  const AsyncScriptLoader = React.createClass({
+  let funcs = {
     displayName: "AsyncScriptLoader",
 
     propTypes: {
-      onLoad: PropTypes.func,
+      asyncScriptOnLoad: PropTypes.func,
     },
 
     statics: {
-      triggerOnScriptLoaded() {
+      asyncScriptLoaderTriggerOnScriptLoaded() {
         let mapEntry = SCRIPT_MAP.get(scriptURL);
         if (!mapEntry || !mapEntry.loaded) {
           throw new Error("Script is not loaded.");
@@ -32,7 +32,7 @@ export default function makeAsyncScript(Component, scriptURL, options) {
       return {};
     },
 
-    getScriptLoaderID() {
+    asyncScriptLoaderGetScriptLoaderID() {
       if (!this.__scriptLoaderID) {
         this.__scriptLoaderID = "async-script-loader-" + idCount++;
       }
@@ -44,7 +44,7 @@ export default function makeAsyncScript(Component, scriptURL, options) {
     },
 
     componentDidMount() {
-      const key = this.getScriptLoaderID();
+      const key = this.asyncScriptLoaderGetScriptLoaderID();
       const { globalName, callbackName, } = options;
       if (globalName && typeof window[globalName] !== "undefined") {
         SCRIPT_MAP.set(scriptURL, { loaded: true, observers: new Map() });
@@ -53,15 +53,15 @@ export default function makeAsyncScript(Component, scriptURL, options) {
       if (SCRIPT_MAP.has(scriptURL)) {
         let entry = SCRIPT_MAP.get(scriptURL);
         if (entry.loaded || entry.errored) {
-          this.handleLoad(entry);
+          this.asyncScriptLoaderHandleLoad(entry);
           return;
         }
-        entry.observers.set(key, this.handleLoad);
+        entry.observers.set(key, this.asyncScriptLoaderHandleLoad);
         return;
       }
 
       let observers = new Map();
-      observers.set(key, this.handleLoad);
+      observers.set(key, this.asyncScriptLoaderHandleLoad);
       SCRIPT_MAP.set(scriptURL, {
         loaded: false,
         observers: observers,
@@ -86,7 +86,7 @@ export default function makeAsyncScript(Component, scriptURL, options) {
       };
 
       if (callbackName && typeof window !== "undefined") {
-        window[callbackName] = AsyncScriptLoader.triggerOnScriptLoaded;
+        window[callbackName] = AsyncScriptLoader.asyncScriptLoaderTriggerOnScriptLoaded;
       }
 
       script.onload = () => {
@@ -110,7 +110,7 @@ export default function makeAsyncScript(Component, scriptURL, options) {
       };
 
       // (old) MSIE browsers may call "onreadystatechange" instead of "onload"
-      script.onreadystatechange = function() {
+      script.onreadystatechange = () => {
         if (this.readyState === "loaded") {
           // wait for other events, then call onload if default onload hadn't been called
           window.setTimeout(() => {
@@ -124,28 +124,39 @@ export default function makeAsyncScript(Component, scriptURL, options) {
       document.body.appendChild(script);
     },
 
-    handleLoad(state) {
-      this.setState(state, this.props.onLoad);
+    asyncScriptLoaderHandleLoad(state) {
+      this.setState(state, this.props.asyncScriptOnLoad);
     },
 
     componentWillUnmount() {
       // Clean the observer entry
       let mapEntry = SCRIPT_MAP.get(scriptURL);
       if (mapEntry) {
-        mapEntry.observers.delete(this.getScriptLoaderID());
+        mapEntry.observers.delete(this.asyncScriptLoaderGetScriptLoaderID());
       }
     },
 
     render() {
       const globalName = options.globalName;
-      let { onLoad, ...childProps } = this.props;
+      let { asyncScriptOnLoad, ...childProps } = this.props;
       if (globalName && typeof window !== "undefined") {
         childProps[globalName] = typeof window[globalName] !== "undefined" ? window[globalName] : undefined;
       }
       return <Component ref="childComponent" {...childProps} />;
     },
 
-  });
+  };
+
+  if (options.exposeFuncs) {
+    for (let funcToExpose of options.exposeFuncs) {
+      /* eslint-disable no-loop-func */
+      funcs[funcToExpose] = function () {
+        return this.refs.childComponent[funcToExpose](...arguments);
+      };
+      /* eslint-enable no-loop-func */
+    }
+  }
+  const AsyncScriptLoader = React.createClass(funcs);
 
   return AsyncScriptLoader;
-};
+}
