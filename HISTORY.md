@@ -1,5 +1,9 @@
 # History
 
+## 0.3.1
+- Removed uncessary "use strict"
+- Bump deps
+
 ## 0.3.0
 - Added a way to expose child functions
 
