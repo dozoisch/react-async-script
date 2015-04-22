@@ -1,4 +1,3 @@
-"use strict";
 import React, { PropTypes } from "react";
 
 let SCRIPT_MAP = new Map();
