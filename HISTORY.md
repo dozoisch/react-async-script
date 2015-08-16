@@ -1,7 +1,8 @@
 # History
 
-## 0.3.3 
+## 0.4.0 
 
+- Fixed issue with refs
 - Bump all deps
 
 ## 0.3.2

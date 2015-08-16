@@ -39,7 +39,7 @@ export default function makeAsyncScript(Component, scriptURL, options) {
     },
 
     getComponent() {
-      return this.refs.childComponent;
+      return this.childComponent;
     },
 
     componentDidMount() {
@@ -141,7 +141,7 @@ export default function makeAsyncScript(Component, scriptURL, options) {
       if (globalName && typeof window !== "undefined") {
         childProps[globalName] = typeof window[globalName] !== "undefined" ? window[globalName] : undefined;
       }
-      return <Component ref="childComponent" {...childProps} />;
+      return <Component ref={(comp) => {this.childComponent = comp; }} {...childProps} />;
     },
 
   };
@@ -149,8 +149,8 @@ export default function makeAsyncScript(Component, scriptURL, options) {
   if (options.exposeFuncs) {
     for (let funcToExpose of options.exposeFuncs) {
       /* eslint-disable no-loop-func */
-      funcs[funcToExpose] = function () {
-        return this.refs.childComponent[funcToExpose](...arguments);
+      funcs[funcToExpose] = function() {
+        return this.childComponent[funcToExpose](...arguments);
       };
       /* eslint-enable no-loop-func */
     }
