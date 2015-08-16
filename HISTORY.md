@@ -1,5 +1,9 @@
 # History
 
+## 0.3.3 
+
+- Bump all deps
+
 ## 0.3.2
 - Bump deps
 

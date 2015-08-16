@@ -1,4 +1,3 @@
-"use strict";
 import _ from "lodash";
 import webpack from "webpack";
 import strategies from "./strategies";
@@ -22,7 +21,7 @@ export default (options) => {
 
   const config = {
     entry: {
-      AsyncScriptLoader: "./src/async-script-loader.js"
+      AsyncScriptLoader: "./src/async-script-loader.js",
     },
 
     output: {
@@ -39,14 +38,14 @@ export default (options) => {
           commonjs2: "react",
           commonjs: "react",
           amd: "react",
-        }
-      }
+        },
+      },
     ],
 
     module: {
       loaders: [
-        { test: /\.js/, loader: "babel?optional[]=es7.objectRestSpread&optional[]=runtime", exclude: /node_modules/ }
-      ]
+        { test: /\.js/, loader: "babel", exclude: /node_modules/ },
+      ],
     },
 
     plugins: [
@@ -54,7 +53,7 @@ export default (options) => {
         "process.env": {
           NODE_ENV: JSON.stringify(environment),
         },
-      })
+      }),
     ],
   };
 

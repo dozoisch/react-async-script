@@ -1,6 +1,6 @@
-/* eslint no-var: 0 */
+/* eslint no-var: 0, strict: [2, "global"] */
 "use strict";
-require("./register-babel");
+require("babel/register");
 
 var webpackConfig = require("./webpack/test.config.js");
 var isCI = process.env.CONTINUOUS_INTEGRATION === "true";
@@ -16,7 +16,7 @@ module.exports = function (config) {
     ],
 
     files: [
-      "test/index.js"
+      "test/index.js",
     ],
 
     preprocessors: {

@@ -44,7 +44,7 @@ export default function makeAsyncScript(Component, scriptURL, options) {
 
     componentDidMount() {
       const key = this.asyncScriptLoaderGetScriptLoaderID();
-      const { globalName, callbackName, } = options;
+      const { globalName, callbackName } = options;
       if (globalName && typeof window[globalName] !== "undefined") {
         SCRIPT_MAP.set(scriptURL, { loaded: true, observers: new Map() });
       }

@@ -1,4 +1,3 @@
-"use strict";
 import React from "react";
 import ReactTestUtils from "react/lib/ReactTestUtils";
 import makeAsyncScriptLoader from "../src/async-script-loader";
@@ -13,7 +12,7 @@ const MockedComponent = React.createClass({
 
   render() {
     return <span/>;
-  }
+  },
 });
 
 describe("AsyncScriptLoader", () => {
@@ -44,7 +43,7 @@ describe("AsyncScriptLoader", () => {
 
   it("should expose functions with scope correctly", (done) => {
     let ComponentWrapper = makeAsyncScriptLoader(MockedComponent, "http://example.com", {
-      exposeFuncs: ["callsACallback"]
+      exposeFuncs: ["callsACallback"],
     });
     let instance = ReactTestUtils.renderIntoDocument(
       <ComponentWrapper />
