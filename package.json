@@ -4,10 +4,13 @@
   "description": "A composition mixin for loading scripts asynchronously for React",
   "main": "lib/async-script-loader.js",
   "scripts": {
-    "build": "node run-babel tools/build.js",
-    "lint": "eslint src test tools webpack karma.conf.js",
-    "test": "karma start --single-run && npm run build",
-    "test-watch": "karma start"
+    "build": "rm -rf lib && babel src --out-dir lib",
+    "lint": "eslint ./",
+    "test": "karma start --single-run",
+    "test-watch": "karma start",
+    "patch": "release patch --run",
+    "minor": "release minor --run",
+    "major": "release major --run"
   },
   "repository": {
     "type": "git",
@@ -46,9 +49,10 @@
     "karma-phantomjs-launcher": "~0.2.1",
     "karma-sourcemap-loader": "~0.3.5",
     "karma-webpack": "~1.7.0",
-    "lodash": "~3.10.1",
     "mocha": "~2.2.5",
+    "mt-changelog": "^0.6.2",
     "react": "~0.13.3",
+    "release-script": "^0.5.3",
     "webpack": "~1.11.0",
     "yargs": "~3.19.0"
   },
