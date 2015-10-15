@@ -3,4 +3,5 @@
     "runtime",
     "es7.objectRestSpread",
   ],
+  "loose": "all",
 }

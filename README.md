@@ -13,7 +13,6 @@ With React 0.13, mixins are getting deprecated in favor of composition.
 After reading this article, [Mixins Are Dead. Long Live Composition][dan_abramov],
 I decided push react-script-loader a bit further and make a composition function that wraps component.
 
-
 ## Usage
 
 The api is very simple `makeAsyncScriptLoader(Component, scriptUrl, options)`. Where options can contain exposeFuncs, callbackName and globalName.
@@ -64,7 +63,7 @@ let reCAPTCHAprops = {
 };
 
 React.render(
-  <ReCAPTHAWrapper onLoad={onLoad} {...reCAPTCHAprops} />,
+  <ReCAPTHAWrapper asyncScriptOnload={onLoad} {...reCAPTCHAprops} />,
   document.body
 );
 ```
