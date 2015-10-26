@@ -63,7 +63,7 @@ let reCAPTCHAprops = {
 };
 
 React.render(
-  <ReCAPTHAWrapper asyncScriptOnload={onLoad} {...reCAPTCHAprops} />,
+  <ReCAPTHAWrapper asyncScriptOnLoad={onLoad} {...reCAPTCHAprops} />,
   document.body
 );
 ```
