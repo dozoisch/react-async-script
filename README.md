@@ -51,7 +51,7 @@ export default makeAsyncScriptLoader(ReCAPTCHA, URL, {
 // main.js
 "use strict";
 import React from "react";
-import ReCAPTHAWrapper from "./recaptcha-wrapper.js"
+import ReCAPTCHAWrapper from "./recaptcha-wrapper.js"
 
 function onLoad() {
   console.log("script loaded");
@@ -63,7 +63,7 @@ let reCAPTCHAprops = {
 };
 
 React.render(
-  <ReCAPTHAWrapper asyncScriptOnLoad={onLoad} {...reCAPTCHAprops} />,
+  <ReCAPTCHAWrapper asyncScriptOnLoad={onLoad} {...reCAPTCHAprops} />,
   document.body
 );
 ```
