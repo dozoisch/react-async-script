@@ -1,6 +1,6 @@
 {
   "name": "react-async-script",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "description": "A composition mixin for loading scripts asynchronously for React",
   "main": "lib/async-script-loader.js",
   "scripts": {
