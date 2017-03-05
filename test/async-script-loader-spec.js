@@ -1,5 +1,6 @@
 import React from "react";
-import ReactTestUtils from "react/lib/ReactTestUtils";
+import ReactDOM from "react-dom";
+import ReactTestUtils from "react-addons-test-utils";
 import makeAsyncScriptLoader from "../src/async-script-loader";
 
 const MockedComponent = React.createClass({
@@ -36,7 +37,7 @@ describe("AsyncScriptLoader", () => {
     let instance = ReactTestUtils.renderIntoDocument(
       <ComponentWrapper />
     );
-    React.unmountComponentAtNode(instance.getDOMNode());
+    ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(instance));
     instance.componentWillUnmount();
     delete window[globalName];
   });

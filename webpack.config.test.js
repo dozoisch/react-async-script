@@ -1,5 +1,5 @@
-import { DefinePlugin } from "webpack";
-export default {
+const DefinePlugin = require("webpack").DefinePlugin;
+module.exports = {
   output: {
     pathinfo: true,
   },
