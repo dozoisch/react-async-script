@@ -8,9 +8,6 @@
     "lint": "eslint ./",
     "test": "karma start --single-run",
     "test-watch": "karma start",
-    "patch": "release patch --run",
-    "minor": "release minor --run",
-    "major": "release major --run"
   },
   "repository": {
     "type": "git",
@@ -53,12 +50,10 @@
     "karma-sourcemap-loader": "~0.3.5",
     "karma-webpack": "~1.7.0",
     "mocha": "~2.3.3",
-    "mt-changelog": "^0.6.2",
     "phantomjs": "^1.9.18",
     "react": "^15.4.2",
     "react-addons-test-utils": "^15.4.2",
     "react-dom": "^15.4.2",
-    "release-script": "^0.5.3",
     "webpack": "~1.14.0"
   },
   "peerDependencies": {
