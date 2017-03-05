@@ -1,6 +1,6 @@
 /* eslint no-var: 0, strict: [2, "global"] */
 "use strict";
-require("babel/register");
+require("babel-register");
 
 var webpackConfig = require("./webpack.config.test.js");
 var isCI = process.env.CONTINUOUS_INTEGRATION === "true";
