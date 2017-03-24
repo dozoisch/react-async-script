@@ -51,7 +51,7 @@ export default function makeAsyncScript(Component, scriptURL, options) {
 
       if (SCRIPT_MAP.has(scriptURL)) {
         let entry = SCRIPT_MAP.get(scriptURL);
-        if (entry.loaded || entry.errored) {
+        if (entry && (entry.loaded || entry.errored)) {
           this.asyncScriptLoaderHandleLoad(entry);
           return;
         }
@@ -90,22 +90,26 @@ export default function makeAsyncScript(Component, scriptURL, options) {
 
       script.onload = () => {
         let mapEntry = SCRIPT_MAP.get(scriptURL);
-        mapEntry.loaded = true;
-        callObserverFuncAndRemoveObserver( (observer) => {
-          if (callbackName) {
-            return false;
-          }
-          observer(mapEntry);
-          return true;
-        });
+        if (mapEntry) {
+          mapEntry.loaded = true;
+          callObserverFuncAndRemoveObserver( (observer) => {
+            if (callbackName) {
+              return false;
+            }
+            observer(mapEntry);
+            return true;
+          });
+        }
       };
       script.onerror = (event) => {
         let mapEntry = SCRIPT_MAP.get(scriptURL);
-        mapEntry.errored = true;
-        callObserverFuncAndRemoveObserver( (observer) => {
-          observer(mapEntry);
-          return true;
-        });
+        if (mapEntry) {
+          mapEntry.errored = true;
+          callObserverFuncAndRemoveObserver( (observer) => {
+            observer(mapEntry);
+            return true;
+          });
+        }
       };
 
       // (old) MSIE browsers may call "onreadystatechange" instead of "onload"
@@ -113,7 +117,8 @@ export default function makeAsyncScript(Component, scriptURL, options) {
         if (this.readyState === "loaded") {
           // wait for other events, then call onload if default onload hadn't been called
           window.setTimeout(() => {
-            if (SCRIPT_MAP.get(scriptURL).loaded !== true) {
+            const mapEntry = SCRIPT_MAP.get(scriptURL);
+            if (mapEntry && mapEntry.loaded !== true) {
               script.onload();
             }
           }, 0);
@@ -128,10 +133,24 @@ export default function makeAsyncScript(Component, scriptURL, options) {
     },
 
     componentWillUnmount() {
+      // Remove tag script
+      if (options.removeOnUnmount === true) {
+        const allScripts = document.getElementsByTagName("script");
+        for(let i = 0; i < allScripts.length; i += 1) {
+          if (allScripts[i].src.indexOf(scriptURL) > -1) {
+            if (allScripts[i].parentNode) {
+              allScripts[i].parentNode.removeChild(allScripts[i]);
+            }          
+          }
+        }
+      }           
       // Clean the observer entry
       let mapEntry = SCRIPT_MAP.get(scriptURL);
       if (mapEntry) {
         mapEntry.observers.delete(this.asyncScriptLoaderGetScriptLoaderID());
+        if (options.removeOnUnmount === true) {
+          SCRIPT_MAP.delete(scriptURL);
+        }
       }
     },
 

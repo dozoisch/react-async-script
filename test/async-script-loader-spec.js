@@ -16,6 +16,16 @@ const MockedComponent = React.createClass({
   },
 });
 
+const hasScript = () => {
+  let as=document.getElementsByTagName("script");
+  for(let i = 0; i < as.length; i+=1) {
+    if (as[i].src.indexOf("http://example.com") > -1) {
+      return true;          
+    }
+  }
+  return false;
+}
+
 describe("AsyncScriptLoader", () => {
   it("should be imported successfully", () => {
     assert.isNotNull(makeAsyncScriptLoader);
@@ -50,5 +60,25 @@ describe("AsyncScriptLoader", () => {
       <ComponentWrapper />
     );
     instance.callsACallback(done);
+  });
+  it("should not remove tag script on removeOnUnmount option not set", () => { 
+    let ComponentWrapper = makeAsyncScriptLoader(MockedComponent, "http://example.com");
+    let instance = ReactTestUtils.renderIntoDocument(
+      <ComponentWrapper />
+    );
+    assert.equal(hasScript(), true);
+    ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(instance));
+    instance.componentWillUnmount();
+    assert.equal(hasScript(), true);
+  });
+  it("should remove tag script on removeOnUnmount option set to true", () => { 
+    let ComponentWrapper = makeAsyncScriptLoader(MockedComponent, "http://example.com", { removeOnUnmount: true });
+    let instance = ReactTestUtils.renderIntoDocument(
+      <ComponentWrapper />
+    );
+    assert.equal(hasScript(), true);
+    ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(instance));
+    instance.componentWillUnmount();
+    assert.equal(hasScript(), false);
   });
 });

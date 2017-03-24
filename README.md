@@ -23,6 +23,7 @@ The api is very simple `makeAsyncScriptLoader(Component, scriptUrl, options)`. W
     - exposeFuncs: Array of String. It'll create a function that will call the child component with the same name. It passes arguments and return value.
     - callbackName: If the scripts calls a global function when loaded, provide the callback name here. It'll be autoregistered on the window.
     - globalName: If wanted, provide the globalName of the loaded script. It'll be injected on the component with the same name *(ex: "grecaptcha")*
+    - removeOnUnmount: Boolean **default=false**: If set to true removes the script tag on the component unmount
 
 You can retrieve the child component using the fonction called `getComponent()`.
 
