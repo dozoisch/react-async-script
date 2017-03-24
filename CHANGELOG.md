@@ -1,8 +1,16 @@
-v0.7.0 - Sat, 04 Mar 2076 6:37:00 PST
+v0.8.0 - Thu, 23 Mar 2017 5:46:00 PST
 --------------------------------------
 
-- Updated deps to react 15 and babel 6
+- Added removeOnUnmount parameter (#14)
+
+
+
+v0.7.0 - Sat, 04 Mar 2017 6:37:00 PST
+--------------------------------------
+
+- Updated deps to react 15 and babel 6 (#13)
 - Go back to manual changelogs
+
 
 
 v0.6.0 - Thu, 02 Jun 2016 01:18:21 GMT
