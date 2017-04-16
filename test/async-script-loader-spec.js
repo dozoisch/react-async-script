@@ -1,26 +1,24 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import ReactTestUtils from "react-addons-test-utils";
+import ReactTestUtils from "react-dom/test-utils";
 import makeAsyncScriptLoader from "../src/async-script-loader";
 
-const MockedComponent = React.createClass({
-  displayName: "MockedComponent",
-
+class MockedComponent extends React.Component {
   callsACallback(fn) {
-    assert.equal(this.constructor.displayName, "MockedComponent");
+    assert.equal(this.constructor.name, "MockedComponent");
     fn();
-  },
+  }
 
   render() {
     return <span/>;
-  },
-});
+  }
+}
 
 const hasScript = () => {
-  let as=document.getElementsByTagName("script");
-  for(let i = 0; i < as.length; i+=1) {
-    if (as[i].src.indexOf("http://example.com") > -1) {
-      return true;          
+  const scripTags = document.getElementsByTagName("script");
+  for (let i = 0; i < scripTags.length; i += 1) {
+    if (scripTags[i].src.indexOf("http://example.com") > -1) {
+      return true;
     }
   }
   return false;
@@ -33,6 +31,7 @@ describe("AsyncScriptLoader", () => {
 
   it("should return a component that contains the passed component", () => {
     let ComponentWrapper = makeAsyncScriptLoader(MockedComponent, "http://example.com");
+    assert.equal(ComponentWrapper.displayName, "AsyncScriptLoader(MockedComponent)");
     let instance = ReactTestUtils.renderIntoDocument(
       <ComponentWrapper />
     );
@@ -61,7 +60,7 @@ describe("AsyncScriptLoader", () => {
     );
     instance.callsACallback(done);
   });
-  it("should not remove tag script on removeOnUnmount option not set", () => { 
+  it("should not remove tag script on removeOnUnmount option not set", () => {
     let ComponentWrapper = makeAsyncScriptLoader(MockedComponent, "http://example.com");
     let instance = ReactTestUtils.renderIntoDocument(
       <ComponentWrapper />
@@ -71,7 +70,7 @@ describe("AsyncScriptLoader", () => {
     instance.componentWillUnmount();
     assert.equal(hasScript(), true);
   });
-  it("should remove tag script on removeOnUnmount option set to true", () => { 
+  it("should remove tag script on removeOnUnmount option set to true", () => {
     let ComponentWrapper = makeAsyncScriptLoader(MockedComponent, "http://example.com", { removeOnUnmount: true });
     let instance = ReactTestUtils.renderIntoDocument(
       <ComponentWrapper />
