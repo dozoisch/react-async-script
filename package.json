@@ -1,13 +1,14 @@
 {
   "name": "react-async-script",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "description": "A composition mixin for loading scripts asynchronously for React",
   "main": "lib/async-script-loader.js",
   "scripts": {
     "build": "rm -rf lib && babel src --out-dir lib",
     "lint": "eslint ./",
     "test": "karma start --single-run",
-    "test-watch": "karma start"
+    "test-watch": "karma start",
+    "prepublish": "npm run build"
   },
   "repository": {
     "type": "git",

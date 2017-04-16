@@ -13,6 +13,11 @@ With React 0.13, mixins are getting deprecated in favor of composition.
 After reading this article, [Mixins Are Dead. Long Live Composition][dan_abramov],
 I decided push react-script-loader a bit further and make a composition function that wraps component.
 
+## Version to use
+
+- __React < 15.5__: v0.8.0
+- __React >= 15.5__: >= v0.9.0
+
 ## Usage
 
 The api is very simple `makeAsyncScriptLoader(Component, scriptUrl, options)`. Where options can contain exposeFuncs, callbackName and globalName.
