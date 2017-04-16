@@ -1,4 +1,5 @@
-import React, { PropTypes } from "react";
+import React from "react";
+import PropTypes from "prop-types";
 
 let SCRIPT_MAP = new Map();
 
@@ -7,40 +8,24 @@ let idCount = 0;
 
 export default function makeAsyncScript(Component, scriptURL, options) {
   options = options || {};
-  let funcs = {
-    displayName: "AsyncScriptLoader",
+  const wrappedComponentName = Component.displayName || Component.name || "Component";
 
-    propTypes: {
-      asyncScriptOnLoad: PropTypes.func,
-    },
-
-    statics: {
-      asyncScriptLoaderTriggerOnScriptLoaded() {
-        let mapEntry = SCRIPT_MAP.get(scriptURL);
-        if (!mapEntry || !mapEntry.loaded) {
-          throw new Error("Script is not loaded.");
-        }
-        for (let observer of mapEntry.observers.values()) {
-          observer(mapEntry);
-        }
-        delete window[options.callbackName];
-      },
-    },
-
-    getInitialState() {
-      return {};
-    },
+  class AsyncScriptLoader extends React.Component {
+    constructor() {
+      super();
+      this.state = {};
+    }
 
     asyncScriptLoaderGetScriptLoaderID() {
       if (!this.__scriptLoaderID) {
         this.__scriptLoaderID = "async-script-loader-" + idCount++;
       }
       return this.__scriptLoaderID;
-    },
+    }
 
     getComponent() {
       return this.childComponent;
-    },
+    }
 
     componentDidMount() {
       const key = this.asyncScriptLoaderGetScriptLoaderID();
@@ -126,11 +111,11 @@ export default function makeAsyncScript(Component, scriptURL, options) {
       };
 
       document.body.appendChild(script);
-    },
+    }
 
     asyncScriptLoaderHandleLoad(state) {
       this.setState(state, this.props.asyncScriptOnLoad);
-    },
+    }
 
     componentWillUnmount() {
       // Remove tag script
@@ -140,10 +125,10 @@ export default function makeAsyncScript(Component, scriptURL, options) {
           if (allScripts[i].src.indexOf(scriptURL) > -1) {
             if (allScripts[i].parentNode) {
               allScripts[i].parentNode.removeChild(allScripts[i]);
-            }          
+            }
           }
         }
-      }           
+      }
       // Clean the observer entry
       let mapEntry = SCRIPT_MAP.get(scriptURL);
       if (mapEntry) {
@@ -152,7 +137,7 @@ export default function makeAsyncScript(Component, scriptURL, options) {
           SCRIPT_MAP.delete(scriptURL);
         }
       }
-    },
+    }
 
     render() {
       const globalName = options.globalName;
@@ -161,20 +146,31 @@ export default function makeAsyncScript(Component, scriptURL, options) {
         childProps[globalName] = typeof window[globalName] !== "undefined" ? window[globalName] : undefined;
       }
       return <Component ref={(comp) => {this.childComponent = comp; }} {...childProps} />;
-    },
-
+    }
+  }
+  AsyncScriptLoader.displayName = `AsyncScriptLoader(${wrappedComponentName})`;
+  AsyncScriptLoader.propTypes = {
+    asyncScriptOnLoad: PropTypes.func,
+  };
+  AsyncScriptLoader.asyncScriptLoaderTriggerOnScriptLoaded = function() {
+    let mapEntry = SCRIPT_MAP.get(scriptURL);
+    if (!mapEntry || !mapEntry.loaded) {
+      throw new Error("Script is not loaded.");
+    }
+    for (let observer of mapEntry.observers.values()) {
+      observer(mapEntry);
+    }
+    delete window[options.callbackName];
   };
 
   if (options.exposeFuncs) {
     for (let funcToExpose of options.exposeFuncs) {
       /* eslint-disable no-loop-func */
-      funcs[funcToExpose] = function() {
-        return this.childComponent[funcToExpose](...arguments);
+      AsyncScriptLoader.prototype[funcToExpose] = function() {
+        return this.getComponent()[funcToExpose](...arguments);
       };
       /* eslint-enable no-loop-func */
     }
   }
-  const AsyncScriptLoader = React.createClass(funcs);
-
   return AsyncScriptLoader;
 }
