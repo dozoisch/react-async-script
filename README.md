@@ -25,7 +25,7 @@ The api is very simple `makeAsyncScriptLoader(Component, scriptUrl, options)`. W
     - globalName: If wanted, provide the globalName of the loaded script. It'll be injected on the component with the same name *(ex: "grecaptcha")*
     - removeOnUnmount: Boolean **default=false**: If set to true removes the script tag on the component unmount
 
-You can retrieve the child component using the fonction called `getComponent()`.
+You can retrieve the child component using the function called `getComponent()`.
 
 ### Example
 
