@@ -40,12 +40,12 @@ export default function makeAsyncScript(Component, scriptURL, options) {
           this.asyncScriptLoaderHandleLoad(entry);
           return;
         }
-        entry.observers.set(key, this.asyncScriptLoaderHandleLoad);
+        entry.observers.set(key, (entry) => this.asyncScriptLoaderHandleLoad(entry));
         return;
       }
 
       let observers = new Map();
-      observers.set(key, this.asyncScriptLoaderHandleLoad);
+      observers.set(key, (entry) => this.asyncScriptLoaderHandleLoad(entry));
       SCRIPT_MAP.set(scriptURL, {
         loaded: false,
         observers: observers,
