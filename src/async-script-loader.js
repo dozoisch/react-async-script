@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-let SCRIPT_MAP = new Map();
+let SCRIPT_MAP = {};
 
 // A counter used to generate a unique id for each component that uses the function
 let idCount = 0;
@@ -31,25 +31,25 @@ export default function makeAsyncScript(Component, scriptURL, options) {
       const key = this.asyncScriptLoaderGetScriptLoaderID();
       const { globalName, callbackName } = options;
       if (globalName && typeof window[globalName] !== "undefined") {
-        SCRIPT_MAP.set(scriptURL, { loaded: true, observers: new Map() });
+        SCRIPT_MAP[scriptURL] = { loaded: true, observers: {} };
       }
 
-      if (SCRIPT_MAP.has(scriptURL)) {
-        let entry = SCRIPT_MAP.get(scriptURL);
+      if (SCRIPT_MAP[scriptURL]) {
+        let entry = SCRIPT_MAP[scriptURL];
         if (entry && (entry.loaded || entry.errored)) {
           this.asyncScriptLoaderHandleLoad(entry);
           return;
         }
-        entry.observers.set(key, (entry) => this.asyncScriptLoaderHandleLoad(entry));
+        entry.observers[key] = (entry) => this.asyncScriptLoaderHandleLoad(entry);
         return;
       }
 
-      let observers = new Map();
-      observers.set(key, (entry) => this.asyncScriptLoaderHandleLoad(entry));
-      SCRIPT_MAP.set(scriptURL, {
+      let observers = {};
+      observers[key] = (entry) => this.asyncScriptLoaderHandleLoad(entry);
+      SCRIPT_MAP[scriptURL] = {
         loaded: false,
-        observers: observers,
-      });
+        observers,
+      };
 
       let script = document.createElement("script");
 
@@ -57,13 +57,13 @@ export default function makeAsyncScript(Component, scriptURL, options) {
       script.async = 1;
 
       let callObserverFuncAndRemoveObserver = (func) => {
-        if (SCRIPT_MAP.has(scriptURL)) {
-          let mapEntry = SCRIPT_MAP.get(scriptURL);
+        if (SCRIPT_MAP[scriptURL]) {
+          let mapEntry = SCRIPT_MAP[scriptURL];
           let observersMap = mapEntry.observers;
 
-          for (let [obsKey, observer] of observersMap) {
-            if (func(observer)) {
-              observersMap.delete(obsKey);
+          for (let obsKey in observersMap) {
+            if (func(observersMap[obsKey])) {
+              delete observersMap[obsKey];
             }
           }
         }
@@ -74,7 +74,7 @@ export default function makeAsyncScript(Component, scriptURL, options) {
       }
 
       script.onload = () => {
-        let mapEntry = SCRIPT_MAP.get(scriptURL);
+        let mapEntry = SCRIPT_MAP[scriptURL];
         if (mapEntry) {
           mapEntry.loaded = true;
           callObserverFuncAndRemoveObserver( (observer) => {
@@ -87,7 +87,7 @@ export default function makeAsyncScript(Component, scriptURL, options) {
         }
       };
       script.onerror = (event) => {
-        let mapEntry = SCRIPT_MAP.get(scriptURL);
+        let mapEntry = SCRIPT_MAP[scriptURL];
         if (mapEntry) {
           mapEntry.errored = true;
           callObserverFuncAndRemoveObserver( (observer) => {
@@ -102,7 +102,7 @@ export default function makeAsyncScript(Component, scriptURL, options) {
         if (this.readyState === "loaded") {
           // wait for other events, then call onload if default onload hadn't been called
           window.setTimeout(() => {
-            const mapEntry = SCRIPT_MAP.get(scriptURL);
+            const mapEntry = SCRIPT_MAP[scriptURL];
             if (mapEntry && mapEntry.loaded !== true) {
               script.onload();
             }
@@ -130,17 +130,18 @@ export default function makeAsyncScript(Component, scriptURL, options) {
         }
       }
       // Clean the observer entry
-      let mapEntry = SCRIPT_MAP.get(scriptURL);
+      let mapEntry = SCRIPT_MAP[scriptURL];
       if (mapEntry) {
-        mapEntry.observers.delete(this.asyncScriptLoaderGetScriptLoaderID());
+        delete mapEntry.observers[this.asyncScriptLoaderGetScriptLoaderID()];
         if (options.removeOnUnmount === true) {
-          SCRIPT_MAP.delete(scriptURL);
+          delete SCRIPT_MAP[scriptURL];
         }
       }
     }
 
     render() {
       const globalName = options.globalName;
+      // remove asyncScriptOnLoad from childprops
       let { asyncScriptOnLoad, ...childProps } = this.props;
       if (globalName && typeof window !== "undefined") {
         childProps[globalName] = typeof window[globalName] !== "undefined" ? window[globalName] : undefined;
@@ -153,24 +154,22 @@ export default function makeAsyncScript(Component, scriptURL, options) {
     asyncScriptOnLoad: PropTypes.func,
   };
   AsyncScriptLoader.asyncScriptLoaderTriggerOnScriptLoaded = function() {
-    let mapEntry = SCRIPT_MAP.get(scriptURL);
+    let mapEntry = SCRIPT_MAP[scriptURL];
     if (!mapEntry || !mapEntry.loaded) {
       throw new Error("Script is not loaded.");
     }
-    for (let observer of mapEntry.observers.values()) {
-      observer(mapEntry);
+    for (let obsKey in mapEntry.observers) {
+      mapEntry.observers[obsKey](mapEntry);
     }
     delete window[options.callbackName];
   };
 
   if (options.exposeFuncs) {
-    for (let funcToExpose of options.exposeFuncs) {
-      /* eslint-disable no-loop-func */
+    options.exposeFuncs.forEach(funcToExpose => {
       AsyncScriptLoader.prototype[funcToExpose] = function() {
         return this.getComponent()[funcToExpose](...arguments);
       };
-      /* eslint-enable no-loop-func */
-    }
+    });
   }
   return AsyncScriptLoader;
 }
