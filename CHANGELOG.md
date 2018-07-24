@@ -1,28 +1,35 @@
+v0.10.0 - Tue, 24 Jul 2018 14:40:00 PST
+--------------------------------------
+
+- Clean up use of Map to remove core-js polyfills [(#27)](github.com/dozoisch/react-async-script/pull/27)
+
+
+
 v0.9.1 - Wed, 19 Apr 2017 6:05:00 PST
 --------------------------------------
 
-- Fixed issue where method was not bound properly (#19)
+- Fixed issue where method was not bound properly [(#19)](github.com/dozoisch/react-async-script/pull/19)
 
 
 
 v0.9.0 - Sun, 16 Apr 2017 4:12:00 PST
 --------------------------------------
 
-- Changed updated to react >=15.5 (#18)
+- Changed updated to react >=15.5 [(#18)](github.com/dozoisch/react-async-script/pull/18)
 
 
 
 v0.8.0 - Thu, 23 Mar 2017 5:46:00 PST
 --------------------------------------
 
-- Added removeOnUnmount parameter (#14)
+- Added removeOnUnmount parameter [(#14)](github.com/dozoisch/react-async-script/pull/14)
 
 
 
 v0.7.0 - Sat, 04 Mar 2017 6:37:00 PST
 --------------------------------------
 
-- Updated deps to react 15 and babel 6 (#13)
+- Updated deps to react 15 and babel 6 [(#13)](github.com/dozoisch/react-async-script/pull/13)
 - Go back to manual changelogs
 
 
@@ -30,7 +37,7 @@ v0.7.0 - Sat, 04 Mar 2017 6:37:00 PST
 v0.6.0 - Thu, 02 Jun 2016 01:18:21 GMT
 --------------------------------------
 
-- [0bc67b2](../../commit/0bc67b2) [fixed] typo in documentation (#9)
+- [0bc67b2](../../commit/0bc67b2) [fixed] typo in documentation [(#9)](github.com/dozoisch/react-async-script/pull/9)
 
 
 
@@ -49,7 +56,7 @@ v0.5.0 - Thu, 15 Oct 2015 21:10:33 GMT
 - [4920f59](../../commit/4920f59) [changed] Build Tools to use babel
 - [253dbf2](../../commit/253dbf2) [fixed] onLoad propname in readme
 
-## 0.4.0 
+## 0.4.0
 
 - Fixed issue with refs
 - Bump all deps
