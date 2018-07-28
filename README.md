@@ -20,10 +20,10 @@ I decided push react-script-loader a bit further and make a composition function
 
 ## Usage
 
-The api is very simple `makeAsyncScriptLoader(Component, scriptUrl, options)`. Where options can contain exposeFuncs, callbackName and globalName.
+The api is very simple `makeAsyncScriptLoader(Component, getScriptUrl, options)`. Where options can contain exposeFuncs, callbackName and globalName.
 
 - Component: The component to wrap.
-- scriptUrl: the full of the script tag.
+- getScriptUrl: a string or function that returns the full URL of the script tag.
 - options *(optional)*:
     - exposeFuncs: Array of String. It'll create a function that will call the child component with the same name. It passes arguments and return value.
     - callbackName: If the scripts calls a global function when loaded, provide the callback name here. It'll be autoregistered on the window.
