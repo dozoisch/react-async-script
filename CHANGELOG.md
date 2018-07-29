@@ -1,3 +1,11 @@
+v0.11.0 - Sun, 29 Jul 2018 11:58:00 PST
+--------------------------------------
+
+- Remove transform runtime [(#29)](https://github.com/dozoisch/react-async-script/pull/29)
+- Added dynamic url capability [(#30)](https://github.com/dozoisch/react-async-script/pull/30)
+
+
+
 v0.10.0 - Tue, 24 Jul 2018 14:40:00 PST
 --------------------------------------
 
