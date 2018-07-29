@@ -5,3 +5,4 @@ tools/
 .travis.yml
 karma.conf.js
 .babelrc
+.vscode

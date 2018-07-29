@@ -14,10 +14,10 @@ class MockedComponent extends React.Component {
   }
 }
 
-const hasScript = () => {
+const hasScript = (URL) => {
   const scripTags = document.getElementsByTagName("script");
   for (let i = 0; i < scripTags.length; i += 1) {
-    if (scripTags[i].src.indexOf("http://example.com") > -1) {
+    if (scripTags[i].src.indexOf(URL) > -1) {
       return true;
     }
   }
@@ -30,54 +30,71 @@ describe("AsyncScriptLoader", () => {
   });
 
   it("should return a component that contains the passed component", () => {
-    let ComponentWrapper = makeAsyncScriptLoader(MockedComponent, "http://example.com");
+    const URL = "http://example.com";
+    const ComponentWrapper = makeAsyncScriptLoader(MockedComponent, URL);
     assert.equal(ComponentWrapper.displayName, "AsyncScriptLoader(MockedComponent)");
-    let instance = ReactTestUtils.renderIntoDocument(
+    const instance = ReactTestUtils.renderIntoDocument(
       <ComponentWrapper />
     );
     assert.ok(ReactTestUtils.isCompositeComponent(instance));
     assert.ok(ReactTestUtils.isCompositeComponentWithType(instance, ComponentWrapper));
     assert.isNotNull(ReactTestUtils.findRenderedComponentWithType(instance, MockedComponent));
+    assert.equal(hasScript(URL), true);
   });
   it("should handle successfully already loaded global object", () => {
-    let globalName = "SomeGlobal";
+    const URL = "http://example.com";
+    const globalName = "SomeGlobal";
     window[globalName] = {};
-    let ComponentWrapper = makeAsyncScriptLoader(MockedComponent, "http://example.com", { globalName: globalName });
-    let instance = ReactTestUtils.renderIntoDocument(
+    const ComponentWrapper = makeAsyncScriptLoader(MockedComponent, URL, { globalName: globalName });
+    const instance = ReactTestUtils.renderIntoDocument(
       <ComponentWrapper />
     );
+    assert.equal(hasScript(URL), true);
     ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(instance));
     instance.componentWillUnmount();
     delete window[globalName];
   });
 
+  it("should accept a function for scriptURL", () => {
+    const URL = "http://example.com/?url=function";
+    const ComponentWrapper = makeAsyncScriptLoader(MockedComponent, () => URL);
+    const instance = ReactTestUtils.renderIntoDocument(
+      <ComponentWrapper />
+    );
+    assert.equal(hasScript(URL), true);
+    ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(instance));
+    instance.componentWillUnmount();
+  });
+
   it("should expose functions with scope correctly", (done) => {
-    let ComponentWrapper = makeAsyncScriptLoader(MockedComponent, "http://example.com", {
+    const ComponentWrapper = makeAsyncScriptLoader(MockedComponent, "http://example.com/", {
       exposeFuncs: ["callsACallback"],
     });
-    let instance = ReactTestUtils.renderIntoDocument(
+    const instance = ReactTestUtils.renderIntoDocument(
       <ComponentWrapper />
     );
     instance.callsACallback(done);
   });
   it("should not remove tag script on removeOnUnmount option not set", () => {
-    let ComponentWrapper = makeAsyncScriptLoader(MockedComponent, "http://example.com");
-    let instance = ReactTestUtils.renderIntoDocument(
+    const URL = "http://example.com/?removeOnUnmount=notset";
+    const ComponentWrapper = makeAsyncScriptLoader(MockedComponent, URL);
+    const instance = ReactTestUtils.renderIntoDocument(
       <ComponentWrapper />
     );
-    assert.equal(hasScript(), true);
+    assert.equal(hasScript(URL), true);
     ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(instance));
     instance.componentWillUnmount();
-    assert.equal(hasScript(), true);
+    assert.equal(hasScript(URL), true);
   });
   it("should remove tag script on removeOnUnmount option set to true", () => {
-    let ComponentWrapper = makeAsyncScriptLoader(MockedComponent, "http://example.com", { removeOnUnmount: true });
-    let instance = ReactTestUtils.renderIntoDocument(
+    const URL = "http://example.com/?removeOnUnmount=true";
+    const ComponentWrapper = makeAsyncScriptLoader(MockedComponent, URL, { removeOnUnmount: true });
+    const instance = ReactTestUtils.renderIntoDocument(
       <ComponentWrapper />
     );
-    assert.equal(hasScript(), true);
+    assert.equal(hasScript(URL), true);
     ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(instance));
     instance.componentWillUnmount();
-    assert.equal(hasScript(), false);
+    assert.equal(hasScript(URL), false);
   });
 });

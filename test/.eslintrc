@@ -3,7 +3,7 @@
     "mocha": true
   },
   "globals": {
-    "assert": true,
+    "assert": true
   },
   "rules": {
     "no-script-url": 1,

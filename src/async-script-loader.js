@@ -6,14 +6,16 @@ let SCRIPT_MAP = {};
 // A counter used to generate a unique id for each component that uses the function
 let idCount = 0;
 
-export default function makeAsyncScript(Component, scriptURL, options) {
+export default function makeAsyncScript(Component, getScriptURL, options) {
   options = options || {};
-  const wrappedComponentName = Component.displayName || Component.name || "Component";
+  const wrappedComponentName =
+    Component.displayName || Component.name || "Component";
 
   class AsyncScriptLoader extends React.Component {
     constructor() {
       super();
       this.state = {};
+      this.__scriptURL = "";
     }
 
     asyncScriptLoaderGetScriptLoaderID() {
@@ -23,11 +25,33 @@ export default function makeAsyncScript(Component, scriptURL, options) {
       return this.__scriptLoaderID;
     }
 
+    setupScriptURL() {
+      this.__scriptURL =
+        typeof getScriptURL === "function" ? getScriptURL() : getScriptURL;
+      return this.__scriptURL;
+    }
+
     getComponent() {
-      return this.childComponent;
+      return this.__childComponent;
+    }
+
+    asyncScriptLoaderHandleLoad(state) {
+      this.setState(state, this.props.asyncScriptOnLoad);
+    }
+
+    asyncScriptLoaderTriggerOnScriptLoaded() {
+      let mapEntry = SCRIPT_MAP[this.__scriptURL];
+      if (!mapEntry || !mapEntry.loaded) {
+        throw new Error("Script is not loaded.");
+      }
+      for (let obsKey in mapEntry.observers) {
+        mapEntry.observers[obsKey](mapEntry);
+      }
+      delete window[options.callbackName];
     }
 
     componentDidMount() {
+      const scriptURL = this.setupScriptURL();
       const key = this.asyncScriptLoaderGetScriptLoaderID();
       const { globalName, callbackName } = options;
       if (globalName && typeof window[globalName] !== "undefined") {
@@ -40,12 +64,12 @@ export default function makeAsyncScript(Component, scriptURL, options) {
           this.asyncScriptLoaderHandleLoad(entry);
           return;
         }
-        entry.observers[key] = (entry) => this.asyncScriptLoaderHandleLoad(entry);
+        entry.observers[key] = entry => this.asyncScriptLoaderHandleLoad(entry);
         return;
       }
 
       let observers = {};
-      observers[key] = (entry) => this.asyncScriptLoaderHandleLoad(entry);
+      observers[key] = entry => this.asyncScriptLoaderHandleLoad(entry);
       SCRIPT_MAP[scriptURL] = {
         loaded: false,
         observers,
@@ -54,9 +78,9 @@ export default function makeAsyncScript(Component, scriptURL, options) {
       let script = document.createElement("script");
 
       script.src = scriptURL;
-      script.async = 1;
+      script.async = true;
 
-      let callObserverFuncAndRemoveObserver = (func) => {
+      let callObserverFuncAndRemoveObserver = func => {
         if (SCRIPT_MAP[scriptURL]) {
           let mapEntry = SCRIPT_MAP[scriptURL];
           let observersMap = mapEntry.observers;
@@ -70,14 +94,15 @@ export default function makeAsyncScript(Component, scriptURL, options) {
       };
 
       if (callbackName && typeof window !== "undefined") {
-        window[callbackName] = AsyncScriptLoader.asyncScriptLoaderTriggerOnScriptLoaded;
+        window[callbackName] = () =>
+          this.asyncScriptLoaderTriggerOnScriptLoaded();
       }
 
       script.onload = () => {
         let mapEntry = SCRIPT_MAP[scriptURL];
         if (mapEntry) {
           mapEntry.loaded = true;
-          callObserverFuncAndRemoveObserver( (observer) => {
+          callObserverFuncAndRemoveObserver(observer => {
             if (callbackName) {
               return false;
             }
@@ -86,11 +111,11 @@ export default function makeAsyncScript(Component, scriptURL, options) {
           });
         }
       };
-      script.onerror = (event) => {
+      script.onerror = event => {
         let mapEntry = SCRIPT_MAP[scriptURL];
         if (mapEntry) {
           mapEntry.errored = true;
-          callObserverFuncAndRemoveObserver( (observer) => {
+          callObserverFuncAndRemoveObserver(observer => {
             observer(mapEntry);
             return true;
           });
@@ -113,15 +138,12 @@ export default function makeAsyncScript(Component, scriptURL, options) {
       document.body.appendChild(script);
     }
 
-    asyncScriptLoaderHandleLoad(state) {
-      this.setState(state, this.props.asyncScriptOnLoad);
-    }
-
     componentWillUnmount() {
       // Remove tag script
+      const scriptURL = this.__scriptURL;
       if (options.removeOnUnmount === true) {
         const allScripts = document.getElementsByTagName("script");
-        for(let i = 0; i < allScripts.length; i += 1) {
+        for (let i = 0; i < allScripts.length; i += 1) {
           if (allScripts[i].src.indexOf(scriptURL) > -1) {
             if (allScripts[i].parentNode) {
               allScripts[i].parentNode.removeChild(allScripts[i]);
@@ -144,24 +166,24 @@ export default function makeAsyncScript(Component, scriptURL, options) {
       // remove asyncScriptOnLoad from childprops
       let { asyncScriptOnLoad, ...childProps } = this.props;
       if (globalName && typeof window !== "undefined") {
-        childProps[globalName] = typeof window[globalName] !== "undefined" ? window[globalName] : undefined;
+        childProps[globalName] =
+          typeof window[globalName] !== "undefined"
+            ? window[globalName]
+            : undefined;
       }
-      return <Component ref={(comp) => {this.childComponent = comp; }} {...childProps} />;
+      return (
+        <Component
+          ref={comp => {
+            this.__childComponent = comp;
+          }}
+          {...childProps}
+        />
+      );
     }
   }
   AsyncScriptLoader.displayName = `AsyncScriptLoader(${wrappedComponentName})`;
   AsyncScriptLoader.propTypes = {
     asyncScriptOnLoad: PropTypes.func,
-  };
-  AsyncScriptLoader.asyncScriptLoaderTriggerOnScriptLoaded = function() {
-    let mapEntry = SCRIPT_MAP[scriptURL];
-    if (!mapEntry || !mapEntry.loaded) {
-      throw new Error("Script is not loaded.");
-    }
-    for (let obsKey in mapEntry.observers) {
-      mapEntry.observers[obsKey](mapEntry);
-    }
-    delete window[options.callbackName];
   };
 
   if (options.exposeFuncs) {
