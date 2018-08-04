@@ -1,34 +1,21 @@
 # React Async Script Loader
 
-[![Build Status][travis.img]][travis.url]
-[![npm version][npm.img]][npm.url]
-[![Dependencies][deps.img]][deps.url]
-[![Dev Dependencies][devdeps.img]][devdeps.url]
+[![Build Status][travis.img]][travis.url] [![npm version][npm.img]][npm.url] [![npm downloads][npm.dl.img]][npm.dl.url] [![Dependencies][deps.img]][deps.url]
 
 A React composition mixin for loading 3rd party scripts asynchronously. This component allows you to wrap component
 that needs 3rd party resources, like reCAPTCHA or Google Maps, and have them load the script asynchronously.
-
-With React 0.13, mixins are getting deprecated in favor of composition.
-
-After reading this article, [Mixins Are Dead. Long Live Composition][dan_abramov],
-I decided push react-script-loader a bit further and make a composition function that wraps component.
-
-## Version to use
-
-- __React < 15.5__: v0.8.0
-- __React >= 15.5__: >= v0.9.0
 
 ## Usage
 
 The api is very simple `makeAsyncScriptLoader(Component, getScriptUrl, options)`. Where options can contain exposeFuncs, callbackName and globalName.
 
-- Component: The component to wrap.
-- getScriptUrl: a string or function that returns the full URL of the script tag.
+- `Component`: The component to wrap.
+- `getScriptUrl`: a string or function that returns the full URL of the script tag.
 - options *(optional)*:
-    - exposeFuncs: Array of String. It'll create a function that will call the child component with the same name. It passes arguments and return value.
-    - callbackName: If the scripts calls a global function when loaded, provide the callback name here. It'll be autoregistered on the window.
-    - globalName: If wanted, provide the globalName of the loaded script. It'll be injected on the component with the same name *(ex: "grecaptcha")*
-    - removeOnUnmount: Boolean **default=false**: If set to true removes the script tag on the component unmount
+    - `exposeFuncs`: Array of Strings. It'll create a function that will call the child component with the same name. It passes arguments and return value.
+    - `callbackName`: If the scripts calls a global function when loaded, provide the callback name here. It'll be autoregistered on the window.
+    - `globalName`: If wanted, provide the globalName of the loaded script. It'll be injected on the component with the same name *(ex: "grecaptcha")*
+    - `removeOnUnmount`: Boolean **default=false**: If set to true removes the script tag on the component unmount
 
 You can retrieve the child component using the function called `getComponent()`.
 
@@ -39,7 +26,6 @@ See https://github.com/dozoisch/react-google-recaptcha
 ```js
 
 // recaptcha-wrapper.js
-"use strict";
 import React from "react";
 
 import ReCAPTCHA from "./recaptcha";
@@ -54,8 +40,8 @@ export default makeAsyncScriptLoader(ReCAPTCHA, URL, {
   globalName: globalName,
 });
 
+
 // main.js
-"use strict";
 import React from "react";
 import ReCAPTCHAWrapper from "./recaptcha-wrapper.js"
 
@@ -104,6 +90,20 @@ let instance = ReactTestUtils.renderIntoDocument(
 instance.callsACallback(function () { console.log("Called from child", this.constructor.displayName); });
 ```
 
+## Notes
+
+### History
+
+With React 0.13, mixins are getting deprecated in favor of composition.
+
+After reading this article, [Mixins Are Dead. Long Live Composition][dan_abramov],
+I decided push react-script-loader a bit further and make a composition function that wraps component.
+
+### Version to use
+
+- __React < 15.5__: v0.8.0
+- __React >= 15.5__: >= v0.9.0
+
 ---
 
 *Inspired by [react-script-loader][sl]*
@@ -114,10 +114,10 @@ instance.callsACallback(function () { console.log("Called from child", this.cons
 [travis.url]: https://travis-ci.org/dozoisch/react-async-script
 [npm.img]: https://badge.fury.io/js/react-async-script.svg
 [npm.url]: http://badge.fury.io/js/react-async-script
+[npm.dl.img]: https://img.shields.io/npm/dm/react-async-script.svg
+[npm.dl.url]: https://www.npmjs.com/package/react-async-script
 [deps.img]: https://david-dm.org/dozoisch/react-async-script.svg
 [deps.url]: https://david-dm.org/dozoisch/react-async-script
-[devdeps.img]: https://david-dm.org/dozoisch/react-async-script/dev-status.svg
-[devdeps.url]: https://david-dm.org/dozoisch/react-async-script#info=devDependencies
 
 [dan_abramov]: https://medium.com/@dan_abramov/mixins-are-dead-long-live-higher-order-components-94a0d2f9e750
 [sl]: https://github.com/yariv/ReactScriptLoader
