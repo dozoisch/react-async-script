@@ -1,3 +1,10 @@
+v0.11.1 - Sat, 4 Aug 2018 12:46:00 PST
+--------------------------------------
+
+- Remove babel-runtime peer dep [(#32)](https://github.com/dozoisch/react-async-script/pull/32)
+- Readme updates [(#31)](https://github.com/dozoisch/react-async-script/pull/31)
+
+
 v0.11.0 - Sun, 29 Jul 2018 11:58:00 PST
 --------------------------------------
 
