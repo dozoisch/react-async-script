@@ -141,19 +141,6 @@ export default function makeAsyncScript(getScriptURL, options) {
           }
         };
 
-        // (old) MSIE browsers may call "onreadystatechange" instead of "onload"
-        script.onreadystatechange = () => {
-          if (this.readyState === "loaded") {
-            // wait for other events, then call onload if default onload hadn't been called
-            window.setTimeout(() => {
-              const mapEntry = SCRIPT_MAP[scriptURL];
-              if (mapEntry && mapEntry.loaded !== true) {
-                script.onload();
-              }
-            }, 0);
-          }
-        };
-
         document.body.appendChild(script);
       }
 
