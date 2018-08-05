@@ -13,8 +13,8 @@ export default function makeAsyncScript(getScriptURL, options) {
     WrappedComponent.displayName || WrappedComponent.name || "Component";
 
     class AsyncScriptLoader extends Component {
-      constructor() {
-        super();
+      constructor(props, context) {
+        super(props, context)
         this.state = {};
         this.__scriptURL = "";
         this.assignChildComponent = this.assignChildComponent.bind(this);
