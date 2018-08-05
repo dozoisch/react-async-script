@@ -42,6 +42,7 @@ export default function makeAsyncScript(getScriptURL, options) {
       }
 
       asyncScriptLoaderHandleLoad(state) {
+        // use reacts setState callback to fire asyncScriptOnLoad
         this.setState(state, this.props.asyncScriptOnLoad);
       }
 
@@ -60,20 +61,30 @@ export default function makeAsyncScript(getScriptURL, options) {
         const scriptURL = this.setupScriptURL();
         const key = this.asyncScriptLoaderGetScriptLoaderID();
         const { globalName, callbackName } = options;
+
+        // check if global object already attached to window
         if (globalName && typeof window[globalName] !== "undefined") {
           SCRIPT_MAP[scriptURL] = { loaded: true, observers: {} };
         }
 
+        // check if script loading already
         if (SCRIPT_MAP[scriptURL]) {
           let entry = SCRIPT_MAP[scriptURL];
+          // if loaded or errored then "finish"
           if (entry && (entry.loaded || entry.errored)) {
             this.asyncScriptLoaderHandleLoad(entry);
             return;
           }
+          // if still loading then callback to observer queue
           entry.observers[key] = entry => this.asyncScriptLoaderHandleLoad(entry);
           return;
         }
 
+        /*
+         * hasn't started loading
+         * start the "magic"
+         * setup script to load and observers
+         */
         let observers = {};
         observers[key] = entry => this.asyncScriptLoaderHandleLoad(entry);
         SCRIPT_MAP[scriptURL] = {
