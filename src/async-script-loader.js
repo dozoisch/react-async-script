@@ -42,8 +42,10 @@ export default function makeAsyncScript(getScriptURL, options) {
       }
 
       asyncScriptLoaderHandleLoad(state) {
-        // use reacts setState callback to fire asyncScriptOnLoad
-        this.setState(state, this.props.asyncScriptOnLoad);
+        // use reacts setState callback to fire props.asyncScriptOnLoad with new state/entry
+        this.setState(state,
+          () => this.props.asyncScriptOnLoad && this.props.asyncScriptOnLoad(this.state)
+        );
       }
 
       asyncScriptLoaderTriggerOnScriptLoaded() {
