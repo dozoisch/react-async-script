@@ -31,7 +31,7 @@ describe("AsyncScriptLoader", () => {
 
   it("should return a component that contains the passed component", () => {
     const URL = "http://example.com";
-    const ComponentWrapper = makeAsyncScriptLoader(MockedComponent, URL);
+    const ComponentWrapper = makeAsyncScriptLoader(URL)(MockedComponent);
     assert.equal(ComponentWrapper.displayName, "AsyncScriptLoader(MockedComponent)");
     const instance = ReactTestUtils.renderIntoDocument(
       <ComponentWrapper />
@@ -45,7 +45,7 @@ describe("AsyncScriptLoader", () => {
     const URL = "http://example.com";
     const globalName = "SomeGlobal";
     window[globalName] = {};
-    const ComponentWrapper = makeAsyncScriptLoader(MockedComponent, URL, { globalName: globalName });
+    const ComponentWrapper = makeAsyncScriptLoader(URL, { globalName: globalName })(MockedComponent);
     const instance = ReactTestUtils.renderIntoDocument(
       <ComponentWrapper />
     );
@@ -57,7 +57,7 @@ describe("AsyncScriptLoader", () => {
 
   it("should accept a function for scriptURL", () => {
     const URL = "http://example.com/?url=function";
-    const ComponentWrapper = makeAsyncScriptLoader(MockedComponent, () => URL);
+    const ComponentWrapper = makeAsyncScriptLoader(() => URL)(MockedComponent);
     const instance = ReactTestUtils.renderIntoDocument(
       <ComponentWrapper />
     );
@@ -67,9 +67,9 @@ describe("AsyncScriptLoader", () => {
   });
 
   it("should expose functions with scope correctly", (done) => {
-    const ComponentWrapper = makeAsyncScriptLoader(MockedComponent, "http://example.com/", {
+    const ComponentWrapper = makeAsyncScriptLoader("http://example.com/", {
       exposeFuncs: ["callsACallback"],
-    });
+    })(MockedComponent);
     const instance = ReactTestUtils.renderIntoDocument(
       <ComponentWrapper />
     );
@@ -77,7 +77,7 @@ describe("AsyncScriptLoader", () => {
   });
   it("should not remove tag script on removeOnUnmount option not set", () => {
     const URL = "http://example.com/?removeOnUnmount=notset";
-    const ComponentWrapper = makeAsyncScriptLoader(MockedComponent, URL);
+    const ComponentWrapper = makeAsyncScriptLoader(URL)(MockedComponent);
     const instance = ReactTestUtils.renderIntoDocument(
       <ComponentWrapper />
     );
@@ -88,7 +88,7 @@ describe("AsyncScriptLoader", () => {
   });
   it("should remove tag script on removeOnUnmount option set to true", () => {
     const URL = "http://example.com/?removeOnUnmount=true";
-    const ComponentWrapper = makeAsyncScriptLoader(MockedComponent, URL, { removeOnUnmount: true });
+    const ComponentWrapper = makeAsyncScriptLoader(URL, { removeOnUnmount: true })(MockedComponent);
     const instance = ReactTestUtils.renderIntoDocument(
       <ComponentWrapper />
     );
