@@ -2,22 +2,35 @@
 
 [![Build Status][travis.img]][travis.url] [![npm version][npm.img]][npm.url] [![npm downloads][npm.dl.img]][npm.dl.url] [![Dependencies][deps.img]][deps.url]
 
-A React composition mixin for loading 3rd party scripts asynchronously. This component allows you to wrap component
-that needs 3rd party resources, like reCAPTCHA or Google Maps, and have them load the script asynchronously.
+A React HOC for loading 3rd party scripts asynchronously. This HOC allows you to wrap a component that needs 3rd party resources, like reCAPTCHA or Google Maps, and have them load the script asynchronously.
 
 ## Usage
 
-The api is very simple `makeAsyncScriptLoader(Component, getScriptUrl, options)`. Where options can contain exposeFuncs, callbackName and globalName.
+#### HOC api
 
-- `Component`: The component to wrap.
-- `getScriptUrl`: a string or function that returns the full URL of the script tag.
-- options *(optional)*:
-    - `exposeFuncs`: Array of Strings. It'll create a function that will call the child component with the same name. It passes arguments and return value.
-    - `callbackName`: If the scripts calls a global function when loaded, provide the callback name here. It'll be autoregistered on the window.
-    - `globalName`: If wanted, provide the globalName of the loaded script. It'll be injected on the component with the same name *(ex: "grecaptcha")*
-    - `removeOnUnmount`: Boolean **default=false**: If set to true removes the script tag on the component unmount
+`makeAsyncScriptLoader(getScriptUrl, options)(Component)`
 
-You can retrieve the child component using the function called `getComponent()`.
+- `Component`: The *Component* to wrap.
+- `getScriptUrl`: *string* or *function* that returns the full URL of the script tag.
+- `options` *(optional)*:
+    - `exposeFuncs`: *array of strings* : It'll create a function that will call the child component with the same name. It passes arguments and return value.
+    - `callbackName`: *string* : If the script needs to call a global function when finished loading *(for example: `recaptcha/api.js?onload=callbackName`)*. Please provide the callback name here and it will be autoregistered on `window` for you.
+    - `globalName`: *string* : If wanted, provide the globalName of the loaded script. It'll be injected on the component with the same name *(ex: "grecaptcha")*
+    - `removeOnUnmount`: *boolean* **default=false** : If set to `true` removes the script tag on the component unmount
+
+#### HOC Component props
+```
+const AsyncScriptComponent = makeAsyncScriptLoader(URL)(Component);
+---
+<AsyncScriptComponent asyncScriptOnLoad={callAfterScriptLoads} />
+```
+- `asyncScriptOnLoad`: *function* : called after script loads
+
+
+#### HOC Instance methods
+
+- `getComponent()`: Using this method call you can retrieve the child component ref instance (the *Component* that is wrapped)
+
 
 ### Example
 
@@ -35,10 +48,10 @@ const callbackName = "onloadcallback";
 const URL = `https://www.google.com/recaptcha/api.js?onload=${callbackName}&render=explicit`;
 const globalName = "grecaptcha";
 
-export default makeAsyncScriptLoader(ReCAPTCHA, URL, {
+export default makeAsyncScriptLoader(URL, {
   callbackName: callbackName,
   globalName: globalName,
-});
+})(ReCAPTCHA);
 
 
 // main.js
@@ -69,8 +82,7 @@ You can still retrieve the child component using `getComponent()`.
 ### Example
 
 ```js
-const MockedComponent = React.createClass({
-  displayName: "MockedComponent",
+class MockedComponent extends React.Component {
 
   callsACallback(fn) {
     fn();
@@ -79,36 +91,25 @@ const MockedComponent = React.createClass({
   render() {
     return <span/>;
   }
-});
+};
+MockedComponent.displayName = "MockedComponent";
 
-let ComponentWrapper = makeAsyncScriptLoader(MockedComponent, "http://example.com", {
+let ComponentWrapper = makeAsyncScriptLoader("http://example.com", {
   exposeFuncs: ["callsACallback"]
-});
-let instance = ReactTestUtils.renderIntoDocument(
+})(MockedComponent);
+
+const instance = ReactTestUtils.renderIntoDocument(
   <ComponentWrapper />
 );
+
 instance.callsACallback(function () { console.log("Called from child", this.constructor.displayName); });
 ```
 
 ## Notes
 
-### History
-
-With React 0.13, mixins are getting deprecated in favor of composition.
-
-After reading this article, [Mixins Are Dead. Long Live Composition][dan_abramov],
-I decided push react-script-loader a bit further and make a composition function that wraps component.
-
-### Version to use
-
-- __React < 15.5__: v0.8.0
-- __React >= 15.5__: >= v0.9.0
+Pre `1.0.0` and - `React < 15.5.*` support details in [0.11.1](https://github.com/dozoisch/react-async-script/tree/v0.11.1).
 
 ---
-
-*Inspired by [react-script-loader][sl]*
-
-*The build tools are highly inspired by [react-bootstrap][rb]*
 
 [travis.img]: https://travis-ci.org/dozoisch/react-async-script.svg?branch=master
 [travis.url]: https://travis-ci.org/dozoisch/react-async-script
@@ -118,7 +119,3 @@ I decided push react-script-loader a bit further and make a composition function
 [npm.dl.url]: https://www.npmjs.com/package/react-async-script
 [deps.img]: https://david-dm.org/dozoisch/react-async-script.svg
 [deps.url]: https://david-dm.org/dozoisch/react-async-script
-
-[dan_abramov]: https://medium.com/@dan_abramov/mixins-are-dead-long-live-higher-order-components-94a0d2f9e750
-[sl]: https://github.com/yariv/ReactScriptLoader
-[rb]: https://github.com/react-bootstrap/react-bootstrap/
