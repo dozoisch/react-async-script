@@ -4,8 +4,7 @@ import ReactTestUtils from "react-dom/test-utils";
 import makeAsyncScriptLoader from "../src/async-script-loader";
 
 class MockedComponent extends React.Component {
-  callsACallback(fn) {
-    assert.equal(this.constructor.name, "MockedComponent");
+  static callsACallback(fn) {
     fn();
   }
 
@@ -121,14 +120,10 @@ describe("AsyncScriptLoader", () => {
     instance.componentWillUnmount();
   });
 
-  it("should expose functions with scope correctly", (done) => {
-    const ComponentWrapper = makeAsyncScriptLoader("http://example.com/?functions=true", {
-      exposeFuncs: ["callsACallback"],
-    })(MockedComponent);
-    const instance = ReactTestUtils.renderIntoDocument(
-      <ComponentWrapper />
-    );
-    instance.callsACallback(done);
+  it("should expose statics", (done) => {
+    const URL = "http://example.com/?functions=true";
+    const ComponentWrapper = makeAsyncScriptLoader(URL)(MockedComponent);
+    ComponentWrapper.callsACallback(done);
   });
 
   it("should not remove tag script on removeOnUnmount option not set", () => {
@@ -155,5 +150,24 @@ describe("AsyncScriptLoader", () => {
     const unmounted = ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(instance).parentNode);
     assert.equal(unmounted, true, "successfully unmounted");
     assert.equal(hasScript(URL), false, "Url not in document after unmounting");
+  });
+
+  it("should allow you to access methods on the wrappedComponent via getComponent", (done) => {
+    class MockedComponentMethod extends React.Component {
+      callsACallback(fn) {
+        assert.equal(this.constructor.name, "MockedComponentMethod");
+        fn();
+      }
+      render() { return <span/>; }
+    }
+    const URL = "http://example.com/?getComponent=true";
+    const ComponentWrapper = makeAsyncScriptLoader(URL)(MockedComponentMethod);
+    const instance = ReactTestUtils.renderIntoDocument(
+      <ComponentWrapper />
+    );
+    const wrappedComponent = instance.getComponent();
+
+    assert.equal(hasScript(URL), true, "Url in document");
+    wrappedComponent.callsACallback(done);
   });
 });

@@ -13,7 +13,6 @@ A React HOC for loading 3rd party scripts asynchronously. This HOC allows you to
 - `Component`: The *Component* to wrap.
 - `getScriptUrl`: *string* or *function* that returns the full URL of the script tag.
 - `options` *(optional)*:
-    - `exposeFuncs`: *array of strings* : It'll create a function that will call the child component with the same name. It passes arguments and return value.
     - `callbackName`: *string* : If the script needs to call a global function when finished loading *(for example: `recaptcha/api.js?onload=callbackName`)*. Please provide the callback name here and it will be autoregistered on `window` for you.
     - `globalName`: *string* : If wanted, provide the globalName of the loaded script. It'll be injected on the component with the same name *(ex: "grecaptcha")*
     - `removeOnUnmount`: *boolean* **default=false** : If set to `true` removes the script tag on the component unmount
@@ -71,38 +70,6 @@ React.render(
   <ReCAPTCHAWrapper asyncScriptOnLoad={onLoad} {...reCAPTCHAprops} />,
   document.body
 );
-```
-
-## Expose Functions
-
-This is really useful if the child component has some utility functions (like `getValue`) that you would like the wrapper to expose.
-
-You can still retrieve the child component using `getComponent()`.
-
-### Example
-
-```js
-class MockedComponent extends React.Component {
-
-  callsACallback(fn) {
-    fn();
-  },
-
-  render() {
-    return <span/>;
-  }
-};
-MockedComponent.displayName = "MockedComponent";
-
-let ComponentWrapper = makeAsyncScriptLoader("http://example.com", {
-  exposeFuncs: ["callsACallback"]
-})(MockedComponent);
-
-const instance = ReactTestUtils.renderIntoDocument(
-  <ComponentWrapper />
-);
-
-instance.callsACallback(function () { console.log("Called from child", this.constructor.displayName); });
 ```
 
 ## Notes

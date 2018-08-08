@@ -52,14 +52,15 @@
     "karma-webpack": "~1.7.0",
     "mocha": "~2.3.3",
     "phantomjs": "^1.9.18",
-    "react": "^15.5.0",
-    "react-dom": "^15.5.0",
+    "react": "^16.4.2",
+    "react-dom": "^16.4.2",
     "webpack": "~1.14.0"
   },
   "peerDependencies": {
     "react": ">=15.5.0"
   },
   "dependencies": {
+    "hoist-non-react-statics": "^3.0.1",
     "prop-types": ">=15.5.0"
   }
 }

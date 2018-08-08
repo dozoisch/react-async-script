@@ -1,5 +1,6 @@
 import { Component, createElement } from "react";
 import PropTypes from "prop-types";
+import hoistStatics from "hoist-non-react-statics";
 
 let SCRIPT_MAP = {};
 
@@ -186,13 +187,6 @@ export default function makeAsyncScript(getScriptURL, options) {
       asyncScriptOnLoad: PropTypes.func,
     };
 
-    if (options.exposeFuncs) {
-      options.exposeFuncs.forEach(funcToExpose => {
-        AsyncScriptLoader.prototype[funcToExpose] = function() {
-          return this.getComponent()[funcToExpose](...arguments);
-        };
-      });
-    }
-    return AsyncScriptLoader;
+    return hoistStatics(AsyncScriptLoader, WrappedComponent);
   }
 }
