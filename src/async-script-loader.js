@@ -187,8 +187,6 @@ export default function makeAsyncScript(getScriptURL, options) {
       asyncScriptOnLoad: PropTypes.func,
     };
 
-    hoistStatics(ForwardedComponent, WrappedComponent);
-
-    return ForwardedComponent;
+    return hoistStatics(ForwardedComponent, WrappedComponent);
   }
 }

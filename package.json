@@ -58,7 +58,7 @@
     "webpack": "~1.14.0"
   },
   "peerDependencies": {
-    "react": ">=16.3.0"
+    "react": ">=16.4.1"
   },
   "dependencies": {
     "hoist-non-react-statics": "^3.0.1",

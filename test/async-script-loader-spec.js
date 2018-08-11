@@ -4,10 +4,6 @@ import ReactTestUtils from "react-dom/test-utils";
 import makeAsyncScriptLoader from "../src/async-script-loader";
 
 class MockedComponent extends React.Component {
-  static callsACallback(fn) {
-    fn();
-  }
-
   render() {
     return <span/>;
   }
@@ -117,8 +113,12 @@ describe("AsyncScriptLoader", () => {
   });
 
   it("should expose statics", (done) => {
+    class MockedComponentWithStatic extends React.Component {
+      static callsACallback(fn) { fn(); }
+      render() { return <span/>; }
+    }
     const URL = "http://example.com/?functions=true";
-    const ComponentWrapper = makeAsyncScriptLoader(URL)(MockedComponent);
+    const ComponentWrapper = makeAsyncScriptLoader(URL)(MockedComponentWithStatic);
     ComponentWrapper.callsACallback(done);
   });
 
@@ -152,24 +152,51 @@ describe("AsyncScriptLoader", () => {
     assert.equal(hasScript(URL), false, "Url not in document after unmounting");
   });
 
-  it.skip("should allow you to access methods on the wrappedComponent via getComponent", (done) => {
-    class MockedComponentMethod extends React.Component {
-      callsACallback(fn) {
-        assert.equal(this.constructor.name, "MockedComponentMethod");
-        fn();
-      }
-      render() { return <span/>; }
+  it("should allow you to access methods on the wrappedComponent via ref callback", (done) => {
+    // internal component with method we want access to
+    class InternalComponent extends React.Component {
+      internalCallsACallback(fn) { fn(); }
+      render() { return ( <div className='bob' /> )}
     }
-    const URL = "http://example.com/?getComponent=true";
-    const ComponentWrapper = makeAsyncScriptLoader(URL)(MockedComponentMethod);
+    const URL = "http://example.com/?ref=true";
+    const ComponentWrapper = makeAsyncScriptLoader(URL)(InternalComponent);
+
+    // wrapping component that applies a ref to our AsyncHOC(InternalComponent)
+    class WrappingComponent extends React.Component {
+      render() { return (<div><ComponentWrapper ref={(r) => this._internalRef = r} /></div>)}
+    }
     const instance = ReactTestUtils.renderIntoDocument(
-      <div>
-        <ComponentWrapper />
-      </div>
+      <WrappingComponent />
     );
-    const wrappedComponent = instance.getComponent();
 
     assert.equal(hasScript(URL), true, "Url in document");
-    wrappedComponent.callsACallback(done);
+    assert.isOk(instance._internalRef.internalCallsACallback, "internal components method available");
+    instance._internalRef.internalCallsACallback(done);
+  });
+
+  it("should allow you to access methods on the wrappedComponent via createRef", (done) => {
+    // internal component with method we want access to
+    class InternalComponent extends React.Component {
+      internalCallsACallback(fn) { fn(); }
+      render() { return ( <div className='bob' /> )}
+    }
+    const URL = "http://example.com/?createRef=true";
+    const ComponentWrapper = makeAsyncScriptLoader(URL)(InternalComponent);
+
+    // wrapping component that applies a ref to our AsyncHOC(InternalComponent)
+    class WrappingComponent extends React.Component {
+      constructor(props) {
+        super(props);
+        this._internalRef = React.createRef();
+      }
+      render() { return (<div><ComponentWrapper ref={this._internalRef} /></div>)}
+    }
+    const instance = ReactTestUtils.renderIntoDocument(
+      <WrappingComponent />
+    );
+
+    assert.equal(hasScript(URL), true, "Url in document");
+    assert.isOk(instance._internalRef.current.internalCallsACallback, "internal components method available");
+    instance._internalRef.current.internalCallsACallback(done);
   });
 });
