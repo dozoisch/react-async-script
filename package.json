@@ -55,6 +55,7 @@
     "phantomjs": "^2.0.0",
     "react": "^16.4.2",
     "react-dom": "^16.4.2",
+    "react-is": "^16.4.2",
     "webpack": "~1.14.0"
   },
   "peerDependencies": {

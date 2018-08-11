@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import ReactTestUtils from "react-dom/test-utils";
+import * as ReactIs from "react-is";
 import makeAsyncScriptLoader from "../src/async-script-loader";
 
 class MockedComponent extends React.Component {
@@ -48,14 +49,12 @@ describe("AsyncScriptLoader", () => {
     }
     const ComponentWrapper = makeAsyncScriptLoader(URL)(MockedComponent);
     assert.equal(ComponentWrapper.displayName, "AsyncScriptLoader(MockedComponent)");
-    const instance = ReactTestUtils.renderIntoDocument(
+    ReactTestUtils.renderIntoDocument(
       <ComponentWrapper asyncScriptOnLoad={asyncScriptOnLoadSpy} />
     );
     documentLoadScript(URL);
 
-    // assert.ok(ReactTestUtils.isCompositeComponent(instance));
-    // assert.ok(ReactTestUtils.isCompositeComponentWithType(instance, ComponentWrapper));
-    // assert.isNotNull(ReactTestUtils.findRenderedComponentWithType(instance, MockedComponent));
+    assert.equal(ReactIs.isValidElementType(ComponentWrapper), true, "is valid elemnt type");
     assert.equal(hasScript(URL), true, "Url in document");
     assert.equal(asyncScriptOnLoadCalled, true, "asyncScriptOnLoad callback called");
     assert.equal(scriptLoaded, true, "script loaded state set");
