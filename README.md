@@ -6,7 +6,7 @@ A React HOC for loading 3rd party scripts asynchronously. This HOC allows you to
 
 ## Usage
 
-#### HOC api
+#### Async Script HOC api
 
 `makeAsyncScriptLoader(getScriptUrl, options)(Component)`
 
@@ -14,8 +14,8 @@ A React HOC for loading 3rd party scripts asynchronously. This HOC allows you to
 - `getScriptUrl`: *string* or *function* that returns the full URL of the script tag.
 - `options` *(optional)*:
     - `callbackName`: *string* : If the script needs to call a global function when finished loading *(for example: `recaptcha/api.js?onload=callbackName`)*. Please provide the callback name here and it will be autoregistered on `window` for you.
-    - `globalName`: *string* : If wanted, provide the globalName of the loaded script. It'll be injected on the component with the same name *(ex: "grecaptcha")*
-    - `removeOnUnmount`: *boolean* **default=false** : If set to `true` removes the script tag on the component unmount
+    - `globalName`: *string* : Can provide the name of the global that the script attaches to `window`. Async-script will pass this as a prop to the wrapped component. *(`props[globalName] = window[globalName]`)*
+    - `removeOnUnmount`: *boolean* **default=false** : If set to `true` removes the script tag when component unmounts.
 
 #### HOC Component props
 ```
@@ -23,12 +23,34 @@ const AsyncScriptComponent = makeAsyncScriptLoader(URL)(Component);
 ---
 <AsyncScriptComponent asyncScriptOnLoad={callAfterScriptLoads} />
 ```
-- `asyncScriptOnLoad`: *function* : called after script loads
+- `asyncScriptOnLoad`: *function* : called after script finishes loading. *using `script.onload`*
 
 
-#### HOC Instance methods
+#### Ref and forwardRef
 
-- `getComponent()`: Using this method call you can retrieve the child component ref instance (the *Component* that is wrapped)
+`react-async-script` uses react's `forwardRef` method to pass along the `ref` applied to the wrapped component.
+
+If you pass a `ref` prop you'll have access to your wrapped components instance. See the tests for detailed example.
+
+Simple Example:
+```
+const AsyncHoc = makeAsyncScriptLoader(URL)(ComponentNeedsScript);
+
+class DisplayComponent extends React.Component {
+  constructor(props) {
+    super(props);
+    this._internalRef = React.createRef();
+  }
+  componentDidMount() {
+    console.log("ComponentNeedsScript's Instance -", this._internalRef.current);
+  }
+  render() { return (<AsyncHoc ref={this._internalRef} />)}
+}
+```
+
+##### Notes on Requirements
+
+At least `React@16.4.1` is required due to `forwardRef` usage internally.
 
 
 ### Example
@@ -36,15 +58,26 @@ const AsyncScriptComponent = makeAsyncScriptLoader(URL)(Component);
 See https://github.com/dozoisch/react-google-recaptcha
 
 ```js
+// recaptcha.js
+export class ReCAPTCHA extends React.Component {
+  componentDidUpdate(prevProps) {
+    // recaptcha has loaded via async script
+    if (!prevProps.grecaptcha && this.props.grecaptcha) {
+      this.props.grecaptcha.render(this._container)
+    }
+  }
+  render() { return (
+    <div ref={(r) => this._container = r} />)
+  }
+}
 
 // recaptcha-wrapper.js
-import React from "react";
-
-import ReCAPTCHA from "./recaptcha";
-import makeAsyncScriptLoader from "./react-async-script";
+import makeAsyncScriptLoader from "react-async-script";
+import { ReCAPTCHA } from "./recaptcha";
 
 const callbackName = "onloadcallback";
 const URL = `https://www.google.com/recaptcha/api.js?onload=${callbackName}&render=explicit`;
+// the name of the global that recaptcha/api.js sets on window ie: window.grecaptcha
 const globalName = "grecaptcha";
 
 export default makeAsyncScriptLoader(URL, {
@@ -52,22 +85,13 @@ export default makeAsyncScriptLoader(URL, {
   globalName: globalName,
 })(ReCAPTCHA);
 
-
 // main.js
-import React from "react";
 import ReCAPTCHAWrapper from "./recaptcha-wrapper.js"
 
-function onLoad() {
-  console.log("script loaded");
-}
-
-let reCAPTCHAprops = {
-  siteKey: "xxxxxxx",
-  //...
-};
+const onLoad = () => console.log("script loaded")
 
 React.render(
-  <ReCAPTCHAWrapper asyncScriptOnLoad={onLoad} {...reCAPTCHAprops} />,
+  <ReCAPTCHAWrapper asyncScriptOnLoad={onLoad} />,
   document.body
 );
 ```

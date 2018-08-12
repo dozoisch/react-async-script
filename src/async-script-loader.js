@@ -174,13 +174,11 @@ export default function makeAsyncScript(getScriptURL, options) {
       }
     }
 
-    hoistStatics(AsyncScriptLoader, WrappedComponent);
-
     // Note the second param "ref" provided by React.forwardRef.
-    // We can pass it along to HoistedAsyncScriptLoader as a regular prop, e.g. "forwardedRef"
+    // We can pass it along to AsyncScriptLoader as a regular prop, e.g. "forwardedRef"
     // And it can then be attached to the Component.
     const ForwardedComponent = forwardRef((props, ref) => {
-      return createElement(AsyncScriptLoader, Object.assign({}, props, { forwardedRef: ref }));
+      return createElement(AsyncScriptLoader, {...props, forwardedRef: ref });
     });
     ForwardedComponent.displayName = `AsyncScriptLoader(${wrappedComponentName})`;
     ForwardedComponent.propTypes = {
