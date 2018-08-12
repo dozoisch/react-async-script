@@ -55,6 +55,7 @@ describe("AsyncScriptLoader", () => {
     documentLoadScript(URL);
 
     assert.equal(ReactIs.isValidElementType(ComponentWrapper), true, "is valid elemnt type");
+    assert.equal(ReactIs.isForwardRef(<ComponentWrapper />), true, "is valid forwardRef");
     assert.equal(hasScript(URL), true, "Url in document");
     assert.equal(asyncScriptOnLoadCalled, true, "asyncScriptOnLoad callback called");
     assert.equal(scriptLoaded, true, "script loaded state set");
