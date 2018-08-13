@@ -1,8 +1,21 @@
+v1.0.0-rc.1 - Sun 12 Aug 2018 17:47:00 PST
+--------------------------------------
+
+- React forward ref [(#37)](https://github.com/dozoisch/react-async-script/pull/37)
+- Update to react 16.4.1 [(#37)](https://github.com/dozoisch/react-async-script/pull/37)
+- Hoist non react statics [(#35)](https://github.com/dozoisch/react-async-script/pull/35)
+- Updated Travis Node versions [(#36)](https://github.com/dozoisch/react-async-script/pull/36)
+- Refactor to new HOC pattern [(#34)](https://github.com/dozoisch/react-async-script/pull/34)
+- Remove old broken IE support [(#34)](https://github.com/dozoisch/react-async-script/pull/34)
+
+
+
 v0.11.1 - Sat, 4 Aug 2018 12:46:00 PST
 --------------------------------------
 
 - Remove babel-runtime peer dep [(#32)](https://github.com/dozoisch/react-async-script/pull/32)
 - Readme updates [(#31)](https://github.com/dozoisch/react-async-script/pull/31)
+
 
 
 v0.11.0 - Sun, 29 Jul 2018 11:58:00 PST
