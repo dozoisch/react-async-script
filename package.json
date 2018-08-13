@@ -55,13 +55,14 @@
     "phantomjs": "^2.0.0",
     "react": "^16.4.2",
     "react-dom": "^16.4.2",
+    "react-is": "^16.4.2",
     "webpack": "~1.14.0"
   },
   "peerDependencies": {
-    "react": ">=15.5.0"
+    "react": ">=16.4.1"
   },
   "dependencies": {
     "hoist-non-react-statics": "^3.0.1",
-    "prop-types": ">=15.5.0"
+    "prop-types": "^15.5.0"
   }
 }

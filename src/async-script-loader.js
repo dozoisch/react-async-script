@@ -1,4 +1,4 @@
-import { Component, createElement } from "react";
+import { Component, createElement, forwardRef } from "react";
 import PropTypes from "prop-types";
 import hoistStatics from "hoist-non-react-statics";
 
@@ -11,14 +11,13 @@ export default function makeAsyncScript(getScriptURL, options) {
   options = options || {};
   return function wrapWithAsyncScript(WrappedComponent) {
     const wrappedComponentName =
-    WrappedComponent.displayName || WrappedComponent.name || "Component";
+      WrappedComponent.displayName || WrappedComponent.name || "Component";
 
     class AsyncScriptLoader extends Component {
       constructor(props, context) {
         super(props, context)
         this.state = {};
         this.__scriptURL = "";
-        this.assignChildComponent = this.assignChildComponent.bind(this);
       }
 
       asyncScriptLoaderGetScriptLoaderID() {
@@ -32,14 +31,6 @@ export default function makeAsyncScript(getScriptURL, options) {
         this.__scriptURL =
           typeof getScriptURL === "function" ? getScriptURL() : getScriptURL;
         return this.__scriptURL;
-      }
-
-      assignChildComponent(ref) {
-        this.__childComponent = ref;
-      }
-
-      getComponent() {
-        return this.__childComponent;
       }
 
       asyncScriptLoaderHandleLoad(state) {
@@ -171,22 +162,29 @@ export default function makeAsyncScript(getScriptURL, options) {
       render() {
         const globalName = options.globalName;
         // remove asyncScriptOnLoad from childProps
-        let { asyncScriptOnLoad, ...childProps } = this.props; // eslint-disable-line no-unused-vars
+        let { asyncScriptOnLoad, forwardedRef, ...childProps } = this.props; // eslint-disable-line no-unused-vars
         if (globalName && typeof window !== "undefined") {
           childProps[globalName] =
             typeof window[globalName] !== "undefined"
               ? window[globalName]
               : undefined;
         }
-        childProps.ref = this.assignChildComponent;
+        childProps.ref = forwardedRef;
         return createElement(WrappedComponent, childProps);
       }
     }
-    AsyncScriptLoader.displayName = `AsyncScriptLoader(${wrappedComponentName})`;
-    AsyncScriptLoader.propTypes = {
+
+    // Note the second param "ref" provided by React.forwardRef.
+    // We can pass it along to AsyncScriptLoader as a regular prop, e.g. "forwardedRef"
+    // And it can then be attached to the Component.
+    const ForwardedComponent = forwardRef((props, ref) => {
+      return createElement(AsyncScriptLoader, {...props, forwardedRef: ref });
+    });
+    ForwardedComponent.displayName = `AsyncScriptLoader(${wrappedComponentName})`;
+    ForwardedComponent.propTypes = {
       asyncScriptOnLoad: PropTypes.func,
     };
 
-    return hoistStatics(AsyncScriptLoader, WrappedComponent);
+    return hoistStatics(ForwardedComponent, WrappedComponent);
   }
 }
