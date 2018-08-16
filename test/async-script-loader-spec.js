@@ -6,7 +6,7 @@ import makeAsyncScriptLoader from "../src/async-script-loader";
 
 class MockedComponent extends React.Component {
   render() {
-    return <span/>;
+    return <span />;
   }
 }
 
@@ -18,19 +18,19 @@ const getScript = (URL, toBoolean = false) => {
     }
   }
   return toBoolean ? false : undefined;
-}
+};
 
-const hasScript = (URL) => getScript(URL, true)
+const hasScript = URL => getScript(URL, true);
 
-const documentLoadScript = (URL) => {
+const documentLoadScript = URL => {
   const script = getScript(URL);
   script.onload();
-}
+};
 
-const documentErrorScript = (URL) => {
+const documentErrorScript = URL => {
   const script = getScript(URL);
   script.onerror();
-}
+};
 
 describe("AsyncScriptLoader", () => {
   it("should be imported successfully", () => {
@@ -42,22 +42,38 @@ describe("AsyncScriptLoader", () => {
     let asyncScriptOnLoadCalled = false;
     let scriptErrored = false;
     let scriptLoaded = false;
-    const asyncScriptOnLoadSpy = (entry) => {
+    const asyncScriptOnLoadSpy = entry => {
       scriptLoaded = entry.loaded;
       scriptErrored = entry.errored;
       asyncScriptOnLoadCalled = true;
-    }
+    };
+    // eslint-disable-next-line no-unused-vars
     const ComponentWrapper = makeAsyncScriptLoader(URL)(MockedComponent);
-    assert.equal(ComponentWrapper.displayName, "AsyncScriptLoader(MockedComponent)");
+    assert.equal(
+      ComponentWrapper.displayName,
+      "AsyncScriptLoader(MockedComponent)"
+    );
     ReactTestUtils.renderIntoDocument(
       <ComponentWrapper asyncScriptOnLoad={asyncScriptOnLoadSpy} />
     );
     documentLoadScript(URL);
 
-    assert.equal(ReactIs.isValidElementType(ComponentWrapper), true, "is valid elemnt type");
-    assert.equal(ReactIs.isForwardRef(<ComponentWrapper />), true, "is valid forwardRef");
+    assert.equal(
+      ReactIs.isValidElementType(ComponentWrapper),
+      true,
+      "is valid elemnt type"
+    );
+    assert.equal(
+      ReactIs.isForwardRef(<ComponentWrapper />),
+      true,
+      "is valid forwardRef"
+    );
     assert.equal(hasScript(URL), true, "Url in document");
-    assert.equal(asyncScriptOnLoadCalled, true, "asyncScriptOnLoad callback called");
+    assert.equal(
+      asyncScriptOnLoadCalled,
+      true,
+      "asyncScriptOnLoad callback called"
+    );
     assert.equal(scriptLoaded, true, "script loaded state set");
     assert.equal(scriptErrored, undefined, "script errored state unset");
   });
@@ -67,11 +83,12 @@ describe("AsyncScriptLoader", () => {
     let asyncScriptOnLoadCalled = false;
     let scriptErrored = false;
     let scriptLoaded = false;
-    const asyncScriptOnLoadSpy = (entry) => {
+    const asyncScriptOnLoadSpy = entry => {
       scriptErrored = entry.errored;
       scriptLoaded = entry.loaded;
       asyncScriptOnLoadCalled = true;
-    }
+    };
+    // eslint-disable-next-line no-unused-vars
     const ComponentWrapper = makeAsyncScriptLoader(URL)(MockedComponent);
     ReactTestUtils.renderIntoDocument(
       <ComponentWrapper asyncScriptOnLoad={asyncScriptOnLoadSpy} />
@@ -79,7 +96,11 @@ describe("AsyncScriptLoader", () => {
     documentErrorScript(URL);
 
     assert.equal(hasScript(URL), true, "Url in document");
-    assert.equal(asyncScriptOnLoadCalled, true, "asyncScriptOnLoad callback called");
+    assert.equal(
+      asyncScriptOnLoadCalled,
+      true,
+      "asyncScriptOnLoad callback called"
+    );
     assert.equal(scriptErrored, true, "script errored state set");
     assert.equal(scriptLoaded, false, "script loaded state set");
   });
@@ -91,39 +112,52 @@ describe("AsyncScriptLoader", () => {
     let asyncScriptOnLoadCalled = false;
     const asyncScriptOnLoadSpy = () => {
       asyncScriptOnLoadCalled = true;
-    }
-    const ComponentWrapper = makeAsyncScriptLoader(URL, { globalName: globalName })(MockedComponent);
+    };
+    // eslint-disable-next-line no-unused-vars
+    const ComponentWrapper = makeAsyncScriptLoader(URL, {
+      globalName: globalName
+    })(MockedComponent);
     ReactTestUtils.renderIntoDocument(
       <ComponentWrapper asyncScriptOnLoad={asyncScriptOnLoadSpy} />
     );
 
     assert.equal(hasScript(URL), false, "Url not in document");
-    assert.equal(asyncScriptOnLoadCalled, true, "asyncScriptOnLoad callback called");
+    assert.equal(
+      asyncScriptOnLoadCalled,
+      true,
+      "asyncScriptOnLoad callback called"
+    );
     delete window[globalName];
   });
 
   it("should accept a function for scriptURL", () => {
     const URL = "http://example.com/?url=function";
+    // eslint-disable-next-line no-unused-vars
     const ComponentWrapper = makeAsyncScriptLoader(() => URL)(MockedComponent);
-    ReactTestUtils.renderIntoDocument(
-      <ComponentWrapper />
-    );
+    ReactTestUtils.renderIntoDocument(<ComponentWrapper />);
 
     assert.equal(hasScript(URL), true, "Url in document");
   });
 
-  it("should expose statics", (done) => {
+  it("should expose statics", done => {
     class MockedComponentWithStatic extends React.Component {
-      static callsACallback(fn) { fn(); }
-      render() { return <span/>; }
+      static callsACallback(fn) {
+        fn();
+      }
+      render() {
+        return <span />;
+      }
     }
     const URL = "http://example.com/?functions=true";
-    const ComponentWrapper = makeAsyncScriptLoader(URL)(MockedComponentWithStatic);
+    const ComponentWrapper = makeAsyncScriptLoader(URL)(
+      MockedComponentWithStatic
+    );
     ComponentWrapper.callsACallback(done);
   });
 
   it("should not remove tag script on removeOnUnmount option not set", () => {
     const URL = "http://example.com/?removeOnUnmount=notset";
+    // eslint-disable-next-line no-unused-vars
     const ComponentWrapper = makeAsyncScriptLoader(URL)(MockedComponent);
     const instance = ReactTestUtils.renderIntoDocument(
       <div>
@@ -132,14 +166,23 @@ describe("AsyncScriptLoader", () => {
     );
 
     assert.equal(hasScript(URL), true, "Url in document");
-    const unmounted = ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(instance).parentNode);
+    const unmounted = ReactDOM.unmountComponentAtNode(
+      ReactDOM.findDOMNode(instance).parentNode
+    );
     assert.equal(unmounted, true, "successfully unmounted");
-    assert.equal(hasScript(URL), true, "Url still in document after unmounting");
+    assert.equal(
+      hasScript(URL),
+      true,
+      "Url still in document after unmounting"
+    );
   });
 
   it("should remove tag script on removeOnUnmount option set to true", () => {
     const URL = "http://example.com/?removeOnUnmount=true";
-    const ComponentWrapper = makeAsyncScriptLoader(URL, { removeOnUnmount: true })(MockedComponent);
+    // eslint-disable-next-line no-unused-vars
+    const ComponentWrapper = makeAsyncScriptLoader(URL, {
+      removeOnUnmount: true
+    })(MockedComponent);
     const instance = ReactTestUtils.renderIntoDocument(
       <div>
         <ComponentWrapper />
@@ -147,56 +190,84 @@ describe("AsyncScriptLoader", () => {
     );
 
     assert.equal(hasScript(URL), true, "Url in document");
-    const unmounted = ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(instance).parentNode);
+    const unmounted = ReactDOM.unmountComponentAtNode(
+      ReactDOM.findDOMNode(instance).parentNode
+    );
     assert.equal(unmounted, true, "successfully unmounted");
     assert.equal(hasScript(URL), false, "Url not in document after unmounting");
   });
 
-  it("should allow you to access methods on the wrappedComponent via ref callback", (done) => {
+  it("should allow you to access methods on the wrappedComponent via ref callback", done => {
     // internal component with method we want access to
     class InternalComponent extends React.Component {
-      internalCallsACallback(fn) { fn(); }
-      render() { return ( <div className='bob' /> )}
+      internalCallsACallback(fn) {
+        fn();
+      }
+      render() {
+        return <div className="bob" />;
+      }
     }
     const URL = "http://example.com/?ref=true";
+    // eslint-disable-next-line no-unused-vars
     const ComponentWrapper = makeAsyncScriptLoader(URL)(InternalComponent);
 
     // wrapping component that applies a ref to our AsyncHOC(InternalComponent)
+    // eslint-disable-next-line no-unused-vars
     class WrappingComponent extends React.Component {
-      render() { return (<div><ComponentWrapper ref={(r) => this._internalRef = r} /></div>)}
+      render() {
+        return (
+          <div>
+            <ComponentWrapper ref={r => (this._internalRef = r)} />
+          </div>
+        );
+      }
     }
-    const instance = ReactTestUtils.renderIntoDocument(
-      <WrappingComponent />
-    );
+    const instance = ReactTestUtils.renderIntoDocument(<WrappingComponent />);
 
     assert.equal(hasScript(URL), true, "Url in document");
-    assert.isOk(instance._internalRef.internalCallsACallback, "internal components method available");
+    assert.isOk(
+      instance._internalRef.internalCallsACallback,
+      "internal components method available"
+    );
     instance._internalRef.internalCallsACallback(done);
   });
 
-  it("should allow you to access methods on the wrappedComponent via createRef", (done) => {
+  it("should allow you to access methods on the wrappedComponent via createRef", done => {
     // internal component with method we want access to
     class InternalComponent extends React.Component {
-      internalCallsACallback(fn) { fn(); }
-      render() { return ( <div className='bob' /> )}
+      internalCallsACallback(fn) {
+        fn();
+      }
+      render() {
+        return <div className="bob" />;
+      }
     }
     const URL = "http://example.com/?createRef=true";
+    // eslint-disable-next-line no-unused-vars
     const ComponentWrapper = makeAsyncScriptLoader(URL)(InternalComponent);
 
     // wrapping component that applies a ref to our AsyncHOC(InternalComponent)
+    // eslint-disable-next-line no-unused-vars
     class WrappingComponent extends React.Component {
       constructor(props) {
         super(props);
         this._internalRef = React.createRef();
       }
-      render() { return (<div><ComponentWrapper ref={this._internalRef} /></div>)}
+      render() {
+        return (
+          <div>
+            <ComponentWrapper ref={this._internalRef} />
+          </div>
+        );
+      }
     }
-    const instance = ReactTestUtils.renderIntoDocument(
-      <WrappingComponent />
-    );
+    const instance = ReactTestUtils.renderIntoDocument(<WrappingComponent />);
 
     assert.equal(hasScript(URL), true, "Url in document");
-    assert.isOk(instance._internalRef.current.internalCallsACallback, "internal components method available");
+    assert.isOk(
+      instance._internalRef.current.internalCallsACallback,
+      "internal components method available"
+    );
     instance._internalRef.current.internalCallsACallback(done);
   });
 });

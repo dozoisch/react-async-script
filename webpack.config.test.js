@@ -1,20 +1,19 @@
+/* eslint-env node */
 const DefinePlugin = require("webpack").DefinePlugin;
 module.exports = {
   output: {
-    pathinfo: true,
+    pathinfo: true
   },
   devtool: "inline-source-map",
 
   module: {
-    loaders: [
-      { test: /\.js/, loader: "babel", exclude: /node_modules/ },
-    ],
+    loaders: [{ test: /\.js/, loader: "babel", exclude: /node_modules/ }]
   },
   plugins: [
     new DefinePlugin({
       "process.env": {
-        NODE_ENV: JSON.stringify("production"),
-      },
-    }),
-  ],
+        NODE_ENV: JSON.stringify("production")
+      }
+    })
+  ]
 };
