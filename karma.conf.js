@@ -1,38 +1,32 @@
-/* eslint no-var: 0, strict: [2, "global"] */
+/* eslint-env node */
 "use strict";
 require("babel-register");
 
-var webpackConfig = require("./webpack.config.test.js");
-var isCI = process.env.CONTINUOUS_INTEGRATION === "true";
+const webpackConfig = require("./webpack.config.test.js");
+const isCI = process.env.CONTINUOUS_INTEGRATION === "true";
 
-module.exports = function (config) {
+module.exports = function(config) {
   config.set({
-
     basePath: "",
 
-    frameworks: [
-      "mocha",
-      "chai",
-    ],
+    frameworks: ["mocha", "chai"],
 
-    files: [
-      "test/index.js",
-    ],
+    files: ["test/index.js"],
 
     preprocessors: {
-      "test/index.js": ["webpack", "sourcemap"],
+      "test/index.js": ["webpack", "sourcemap"]
     },
 
     webpack: webpackConfig,
 
     webpackMiddleware: {
-      noInfo: isCI,
+      noInfo: isCI
     },
 
     reporters: ["mocha"],
 
     mochaReporter: {
-      output: "autowatch",
+      output: "autowatch"
     },
 
     port: 9876,
@@ -43,11 +37,11 @@ module.exports = function (config) {
 
     autoWatch: true,
 
-    browsers: [ isCI ? "PhantomJS" : "Chrome" ],
+    browsers: [isCI ? "PhantomJS" : "Chrome"],
 
     captureTimeout: 60000,
     browserNoActivityTimeout: 30000,
 
-    singleRun: isCI,
+    singleRun: isCI
   });
 };

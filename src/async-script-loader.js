@@ -15,7 +15,7 @@ export default function makeAsyncScript(getScriptURL, options) {
 
     class AsyncScriptLoader extends Component {
       constructor(props, context) {
-        super(props, context)
+        super(props, context);
         this.state = {};
         this.__scriptURL = "";
       }
@@ -35,8 +35,11 @@ export default function makeAsyncScript(getScriptURL, options) {
 
       asyncScriptLoaderHandleLoad(state) {
         // use reacts setState callback to fire props.asyncScriptOnLoad with new state/entry
-        this.setState(state,
-          () => this.props.asyncScriptOnLoad && this.props.asyncScriptOnLoad(this.state)
+        this.setState(
+          state,
+          () =>
+            this.props.asyncScriptOnLoad &&
+            this.props.asyncScriptOnLoad(this.state)
         );
       }
 
@@ -70,7 +73,8 @@ export default function makeAsyncScript(getScriptURL, options) {
             return;
           }
           // if still loading then callback to observer queue
-          entry.observers[key] = entry => this.asyncScriptLoaderHandleLoad(entry);
+          entry.observers[key] = entry =>
+            this.asyncScriptLoaderHandleLoad(entry);
           return;
         }
 
@@ -83,7 +87,7 @@ export default function makeAsyncScript(getScriptURL, options) {
         observers[key] = entry => this.asyncScriptLoaderHandleLoad(entry);
         SCRIPT_MAP[scriptURL] = {
           loaded: false,
-          observers,
+          observers
         };
 
         let script = document.createElement("script");
@@ -122,7 +126,7 @@ export default function makeAsyncScript(getScriptURL, options) {
             });
           }
         };
-        script.onerror = event => {
+        script.onerror = () => {
           let mapEntry = SCRIPT_MAP[scriptURL];
           if (mapEntry) {
             mapEntry.errored = true;
@@ -178,13 +182,13 @@ export default function makeAsyncScript(getScriptURL, options) {
     // We can pass it along to AsyncScriptLoader as a regular prop, e.g. "forwardedRef"
     // And it can then be attached to the Component.
     const ForwardedComponent = forwardRef((props, ref) => {
-      return createElement(AsyncScriptLoader, {...props, forwardedRef: ref });
+      return createElement(AsyncScriptLoader, { ...props, forwardedRef: ref });
     });
     ForwardedComponent.displayName = `AsyncScriptLoader(${wrappedComponentName})`;
     ForwardedComponent.propTypes = {
-      asyncScriptOnLoad: PropTypes.func,
+      asyncScriptOnLoad: PropTypes.func
     };
 
     return hoistStatics(ForwardedComponent, WrappedComponent);
-  }
+  };
 }
