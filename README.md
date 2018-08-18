@@ -20,9 +20,9 @@ A React HOC for loading 3rd party scripts asynchronously. This HOC allows you to
     - `removeOnUnmount`: *boolean* **default=false** : If set to `true` removes the script tag when component unmounts.
 
 #### HOC Component props
-```
+```js
 const AsyncScriptComponent = makeAsyncScriptLoader(URL)(Component);
----
+// ---
 <AsyncScriptComponent asyncScriptOnLoad={callAfterScriptLoads} />
 ```
 - `asyncScriptOnLoad`: *function* : called after script finishes loading. *using `script.onload`*
@@ -35,7 +35,7 @@ const AsyncScriptComponent = makeAsyncScriptLoader(URL)(Component);
 If you pass a `ref` prop you'll have access to your wrapped components instance. See the tests for detailed example.
 
 Simple Example:
-```
+```js
 const AsyncHoc = makeAsyncScriptLoader(URL)(ComponentNeedsScript);
 
 class DisplayComponent extends React.Component {
@@ -97,6 +97,25 @@ React.render(
   document.body
 );
 ```
+
+## Migration to 1.0
+
+- Component is now passed as a second function call
+- removeOnMount is now removeOnUnmount (typo fixed!)
+- exposeFuncs is no longer needed as it's done automatically!
+
+```diff
+-export default makeAsyncScriptLoader(ReCAPTCHA, getURL, {
++export default makeAsyncScriptLoader(getURL, {
+   callbackName,
+   globalName,
+-  removeOnMount: initialOptions.removeOnMount || false,
++  removeOnUnmount: initialOptions.removeOnUnmount || false,
+-  exposeFuncs: ["getValue", "getWidgetId", "reset", "execute"],
+-});
++})(ReCAPTCHA);
+```
+
 
 ## Notes
 
