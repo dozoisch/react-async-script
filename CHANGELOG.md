@@ -1,4 +1,4 @@
-v1.0.0-rc.1 - Sun 12 Aug 2018 17:47:00 PST
+v1.0.0 - Fri 17 Aug 2018 17:32:00 PST
 --------------------------------------
 
 - React forward ref [(#37)](https://github.com/dozoisch/react-async-script/pull/37)
@@ -7,7 +7,7 @@ v1.0.0-rc.1 - Sun 12 Aug 2018 17:47:00 PST
 - Updated Travis Node versions [(#36)](https://github.com/dozoisch/react-async-script/pull/36)
 - Refactor to new HOC pattern [(#34)](https://github.com/dozoisch/react-async-script/pull/34)
 - Remove old broken IE support [(#34)](https://github.com/dozoisch/react-async-script/pull/34)
-
+- Add migration notes [(#40)](https://github.com/dozoisch/react-async-script/pull/40)
 
 
 v0.11.1 - Sat, 4 Aug 2018 12:46:00 PST
