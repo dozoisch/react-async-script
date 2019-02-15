@@ -57,7 +57,7 @@ export default function makeAsyncScript(getScriptURL, options) {
       componentDidMount() {
         const scriptURL = this.setupScriptURL();
         const key = this.asyncScriptLoaderGetScriptLoaderID();
-        const { globalName, callbackName } = options;
+        const { globalName, callbackName, scriptId } = options;
 
         // check if global object already attached to window
         if (globalName && typeof window[globalName] !== "undefined") {
@@ -94,6 +94,9 @@ export default function makeAsyncScript(getScriptURL, options) {
 
         script.src = scriptURL;
         script.async = true;
+        if (scriptId) {
+          script.id = scriptId;
+        }
 
         let callObserverFuncAndRemoveObserver = func => {
           if (SCRIPT_MAP[scriptURL]) {
