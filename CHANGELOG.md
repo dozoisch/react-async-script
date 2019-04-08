@@ -1,3 +1,10 @@
+v1.0.1 - Sun 17 Apr 2019 19:14:00 PST
+--------------------------------------
+
+- Support for adding a script id attribute [(#43)](https://github.com/dozoisch/react-async-script/pull/43)
+
+
+
 v1.0.0 - Fri 17 Aug 2018 17:32:00 PST
 --------------------------------------
 
@@ -8,6 +15,7 @@ v1.0.0 - Fri 17 Aug 2018 17:32:00 PST
 - Refactor to new HOC pattern [(#34)](https://github.com/dozoisch/react-async-script/pull/34)
 - Remove old broken IE support [(#34)](https://github.com/dozoisch/react-async-script/pull/34)
 - Add migration notes [(#40)](https://github.com/dozoisch/react-async-script/pull/40)
+
 
 
 v0.11.1 - Sat, 4 Aug 2018 12:46:00 PST
