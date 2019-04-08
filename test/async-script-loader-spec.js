@@ -142,7 +142,11 @@ describe("AsyncScriptLoader", () => {
   it("should add a id to the script tag", () => {
     const URL = "http://example.com/?has_an_id=true";
     const scriptId = "SOME_SCRIPT_ID";
-    const ComponentWrapper = makeAsyncScriptLoader(URL, { scriptId })(MockedComponent);
+
+    // eslint-disable-next-line no-unused-vars
+    const ComponentWrapper = makeAsyncScriptLoader(URL, { scriptId })(
+      MockedComponent
+    );
     ReactTestUtils.renderIntoDocument(<ComponentWrapper />);
 
     assert.equal(hasScript(URL), true, "Url in document");
