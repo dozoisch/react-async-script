@@ -18,6 +18,7 @@ A React HOC for loading 3rd party scripts asynchronously. This HOC allows you to
     - `callbackName`: *string* : If the script needs to call a global function when finished loading *(for example: `recaptcha/api.js?onload=callbackName`)*. Please provide the callback name here and it will be autoregistered on `window` for you.
     - `globalName`: *string* : Can provide the name of the global that the script attaches to `window`. Async-script will pass this as a prop to the wrapped component. *(`props[globalName] = window[globalName]`)*
     - `removeOnUnmount`: *boolean* **default=false** : If set to `true` removes the script tag when component unmounts.
+    - `scriptId`: *string* : If set, it adds the following id on the script tag.
 
 #### HOC Component props
 ```js

@@ -139,6 +139,17 @@ describe("AsyncScriptLoader", () => {
     assert.equal(hasScript(URL), true, "Url in document");
   });
 
+  it("should add a id to the script tag", () => {
+    const URL = "http://example.com/?has_an_id=true";
+    const scriptId = "SOME_SCRIPT_ID";
+    const ComponentWrapper = makeAsyncScriptLoader(URL, { scriptId })(MockedComponent);
+    ReactTestUtils.renderIntoDocument(<ComponentWrapper />);
+
+    assert.equal(hasScript(URL), true, "Url in document");
+    const script = getScript(URL);
+    assert.equal(script.id, scriptId);
+  });
+
   it("should expose statics", done => {
     class MockedComponentWithStatic extends React.Component {
       static callsACallback(fn) {
