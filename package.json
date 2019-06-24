@@ -3,8 +3,11 @@
   "version": "1.0.1",
   "description": "A composition mixin for loading scripts asynchronously for React",
   "main": "lib/async-script-loader.js",
+  "module": "lib/esm/async-script-loader.js",
   "scripts": {
-    "build": "rm -rf lib && babel src --out-dir lib",
+    "build": "rm -rf lib && npm run build:cjs && npm run build:esm",
+    "build:cjs": "babel src --out-dir lib",
+    "build:esm": "BABEL_ENV=esm babel src --out-dir lib/esm",
     "lint": "eslint ./",
     "pretty": "prettier --write src/*.js ./*.js test/*.js",
     "test": "karma start --single-run",
