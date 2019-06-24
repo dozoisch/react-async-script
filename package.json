@@ -49,7 +49,7 @@
     "karma-phantomjs-launcher": "^0.2.1",
     "karma-sourcemap-loader": "~0.3.5",
     "karma-webpack": "^4.0.2",
-    "mocha": "~2.3.3",
+    "mocha": "^6.1.4",
     "phantomjs": "^2.0.0",
     "prettier": "^1.14.2",
     "react": "^16.4.2",
