@@ -10,8 +10,8 @@
     "build:esm": "BABEL_ENV=esm babel src --out-dir lib/esm",
     "lint": "eslint ./",
     "pretty": "prettier --write src/*.js ./*.js test/*.js",
-    "test": "karma start --single-run",
-    "test-watch": "karma start",
+    "test": "jest",
+    "test-watch": "jest --watch",
     "prepare": "npm run build"
   },
   "repository": {
@@ -36,35 +36,20 @@
     "@babel/preset-react": "^7.0.0",
     "@babel/register": "^7.4.4",
     "babel-eslint": "^10.0.2",
-    "babel-loader": "^8.0.6",
-    "chai": "^4.2.0",
-    "es5-shim": "~4.1.3",
-    "es6-shim": "^0.35.3",
     "eslint": "^5.16.0",
     "eslint-config-prettier": "^3.0.1",
     "eslint-plugin-prettier": "^2.6.2",
-    "karma": "^4.1.0",
-    "karma-chai": "~0.1.0",
-    "karma-chrome-launcher": "^2.2.0",
-    "karma-cli": "^2.0.0",
-    "karma-mocha": "^1.3.0",
-    "karma-mocha-reporter": "^2.2.5",
-    "karma-phantomjs-launcher": "^1.0.4",
-    "karma-sourcemap-loader": "~0.3.5",
-    "karma-webpack": "^4.0.2",
-    "mocha": "^6.1.4",
-    "phantomjs-prebuilt": "^2.1.16",
+    "jest": "^24.8.0",
     "prettier": "^1.14.2",
     "react": "^16.4.2",
     "react-dom": "^16.4.2",
-    "react-is": "^16.4.2",
-    "webpack": "^4.35.0"
+    "react-is": "^16.4.2"
   },
   "peerDependencies": {
     "react": ">=16.4.1"
   },
   "dependencies": {
-    "hoist-non-react-statics": "^3.0.1",
+    "hoist-non-react-statics": "^3.3.0",
     "prop-types": "^15.5.0"
   }
 }
