@@ -1,6 +1,6 @@
 /* eslint-env node */
 "use strict";
-require("babel-register");
+require("@babel/register");
 
 const webpackConfig = require("./webpack.config.test.js");
 const isCI = process.env.CONTINUOUS_INTEGRATION === "true";
