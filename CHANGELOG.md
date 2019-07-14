@@ -1,3 +1,11 @@
+v1.1.0 - Sun Jul 14 2019 10:19:00 PST
+--------------------------------------
+
+- Switch to Jest [(#45)](https://github.com/dozoisch/react-async-script/pull/45)
+- Upgrade dependencies and add es module [(#44)](https://github.com/dozoisch/react-async-script/pull/44)
+
+
+
 v1.0.1 - Sun 17 Apr 2019 19:14:00 PST
 --------------------------------------
 
