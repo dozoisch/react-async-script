@@ -34,7 +34,7 @@ const documentErrorScript = URL => {
 
 describe("AsyncScriptLoader", () => {
   it("should be imported successfully", () => {
-    assert.isNotNull(makeAsyncScriptLoader);
+    expect(makeAsyncScriptLoader).not.toBeNull();
   });
 
   it("should return a component that contains the passed component and fire asyncScriptOnLoad", () => {
@@ -49,8 +49,7 @@ describe("AsyncScriptLoader", () => {
     };
     // eslint-disable-next-line no-unused-vars
     const ComponentWrapper = makeAsyncScriptLoader(URL)(MockedComponent);
-    assert.equal(
-      ComponentWrapper.displayName,
+    expect(ComponentWrapper.displayName).toEqual(
       "AsyncScriptLoader(MockedComponent)"
     );
     ReactTestUtils.renderIntoDocument(
@@ -58,24 +57,12 @@ describe("AsyncScriptLoader", () => {
     );
     documentLoadScript(URL);
 
-    assert.equal(
-      ReactIs.isValidElementType(ComponentWrapper),
-      true,
-      "is valid elemnt type"
-    );
-    assert.equal(
-      ReactIs.isForwardRef(<ComponentWrapper />),
-      true,
-      "is valid forwardRef"
-    );
-    assert.equal(hasScript(URL), true, "Url in document");
-    assert.equal(
-      asyncScriptOnLoadCalled,
-      true,
-      "asyncScriptOnLoad callback called"
-    );
-    assert.equal(scriptLoaded, true, "script loaded state set");
-    assert.equal(scriptErrored, undefined, "script errored state unset");
+    expect(ReactIs.isValidElementType(ComponentWrapper)).toEqual(true);
+    expect(ReactIs.isForwardRef(<ComponentWrapper />)).toEqual(true);
+    expect(hasScript(URL)).toEqual(true);
+    expect(asyncScriptOnLoadCalled).toEqual(true);
+    expect(scriptLoaded).toEqual(true);
+    expect(scriptErrored).toEqual(undefined);
   });
 
   it("should fire asyncScriptOnLoad on errored script load", () => {
@@ -95,14 +82,10 @@ describe("AsyncScriptLoader", () => {
     );
     documentErrorScript(URL);
 
-    assert.equal(hasScript(URL), true, "Url in document");
-    assert.equal(
-      asyncScriptOnLoadCalled,
-      true,
-      "asyncScriptOnLoad callback called"
-    );
-    assert.equal(scriptErrored, true, "script errored state set");
-    assert.equal(scriptLoaded, false, "script loaded state set");
+    expect(hasScript(URL)).toEqual(true);
+    expect(asyncScriptOnLoadCalled).toEqual(true);
+    expect(scriptErrored).toEqual(true);
+    expect(scriptLoaded).toEqual(false);
   });
 
   it("should handle successfully already loaded global object and fire asyncScriptOnLoad", () => {
@@ -121,12 +104,8 @@ describe("AsyncScriptLoader", () => {
       <ComponentWrapper asyncScriptOnLoad={asyncScriptOnLoadSpy} />
     );
 
-    assert.equal(hasScript(URL), false, "Url not in document");
-    assert.equal(
-      asyncScriptOnLoadCalled,
-      true,
-      "asyncScriptOnLoad callback called"
-    );
+    expect(hasScript(URL)).toEqual(false);
+    expect(asyncScriptOnLoadCalled).toEqual(true);
     delete window[globalName];
   });
 
@@ -136,7 +115,7 @@ describe("AsyncScriptLoader", () => {
     const ComponentWrapper = makeAsyncScriptLoader(() => URL)(MockedComponent);
     ReactTestUtils.renderIntoDocument(<ComponentWrapper />);
 
-    assert.equal(hasScript(URL), true, "Url in document");
+    expect(hasScript(URL)).toEqual(true);
   });
 
   it("should add a id to the script tag", () => {
@@ -149,9 +128,9 @@ describe("AsyncScriptLoader", () => {
     );
     ReactTestUtils.renderIntoDocument(<ComponentWrapper />);
 
-    assert.equal(hasScript(URL), true, "Url in document");
+    expect(hasScript(URL)).toEqual(true);
     const script = getScript(URL);
-    assert.equal(script.id, scriptId);
+    expect(script.id).toEqual(scriptId);
   });
 
   it("should expose statics", done => {
@@ -180,16 +159,12 @@ describe("AsyncScriptLoader", () => {
       </div>
     );
 
-    assert.equal(hasScript(URL), true, "Url in document");
+    expect(hasScript(URL)).toEqual(true);
     const unmounted = ReactDOM.unmountComponentAtNode(
       ReactDOM.findDOMNode(instance).parentNode
     );
-    assert.equal(unmounted, true, "successfully unmounted");
-    assert.equal(
-      hasScript(URL),
-      true,
-      "Url still in document after unmounting"
-    );
+    expect(unmounted).toEqual(true);
+    expect(hasScript(URL)).toEqual(true);
   });
 
   it("should remove tag script on removeOnUnmount option set to true", () => {
@@ -204,12 +179,12 @@ describe("AsyncScriptLoader", () => {
       </div>
     );
 
-    assert.equal(hasScript(URL), true, "Url in document");
+    expect(hasScript(URL)).toEqual(true);
     const unmounted = ReactDOM.unmountComponentAtNode(
       ReactDOM.findDOMNode(instance).parentNode
     );
-    assert.equal(unmounted, true, "successfully unmounted");
-    assert.equal(hasScript(URL), false, "Url not in document after unmounting");
+    expect(unmounted).toEqual(true);
+    expect(hasScript(URL)).toEqual(false);
   });
 
   it("should allow you to access methods on the wrappedComponent via ref callback", done => {
@@ -239,11 +214,8 @@ describe("AsyncScriptLoader", () => {
     }
     const instance = ReactTestUtils.renderIntoDocument(<WrappingComponent />);
 
-    assert.equal(hasScript(URL), true, "Url in document");
-    assert.isOk(
-      instance._internalRef.internalCallsACallback,
-      "internal components method available"
-    );
+    expect(hasScript(URL)).toEqual(true);
+    expect(instance._internalRef.internalCallsACallback).toBeTruthy();
     instance._internalRef.internalCallsACallback(done);
   });
 
@@ -278,11 +250,8 @@ describe("AsyncScriptLoader", () => {
     }
     const instance = ReactTestUtils.renderIntoDocument(<WrappingComponent />);
 
-    assert.equal(hasScript(URL), true, "Url in document");
-    assert.isOk(
-      instance._internalRef.current.internalCallsACallback,
-      "internal components method available"
-    );
+    expect(hasScript(URL)).toEqual(true);
+    expect(instance._internalRef.current.internalCallsACallback).toBeTruthy();
     instance._internalRef.current.internalCallsACallback(done);
   });
 });
