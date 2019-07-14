@@ -1,7 +1,13 @@
 {
   "presets": [
-    "react",
-    [ "es2015", { "loose": true } ]
+    "@babel/react",
+    [ "@babel/env", { "loose": true } ]
   ],
-  "plugins": [ "transform-object-rest-spread" ]
+  "env": {
+    "esm": {
+      "presets": [
+        [ "@babel/env", { "loose": true, "modules": false } ]
+      ]
+    }
+  }
 }
