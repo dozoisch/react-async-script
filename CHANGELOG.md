@@ -1,3 +1,9 @@
+v1.1.1 - Sun Jul 14 2019 11:14:00 PST
+--------------------------------------
+
+- Add node 12 to build [(#46)](https://github.com/dozoisch/react-async-script/pull/46)
+
+
 v1.1.0 - Sun Jul 14 2019 10:19:00 PST
 --------------------------------------
 
