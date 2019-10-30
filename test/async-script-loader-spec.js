@@ -256,26 +256,26 @@ describe("AsyncScriptLoader", () => {
   });
 
   it("should expose global callback", () => {
-    const callbackName = 'exampleCallback';
+    const callbackName = "exampleCallback";
     const URL = `http://example.com/?callback=${callbackName}`;
+    // eslint-disable-next-line no-unused-vars
     const ComponentWrapper = makeAsyncScriptLoader(URL, {
       callbackName
     })(MockedComponent);
-    ReactTestUtils.renderIntoDocument(
-      <ComponentWrapper />
-    );
+    ReactTestUtils.renderIntoDocument(<ComponentWrapper />);
 
-    expect(typeof window[callbackName]).toBe('function');
+    expect(typeof window[callbackName]).toBe("function");
     delete window[callbackName];
-  })
+  });
 
   it("should call loaded if global callback called before onLoad", () => {
-    const callbackName = 'exampleCallbackBeforeOnload';
+    const callbackName = "exampleCallbackBeforeOnload";
     const URL = `http://example.com/?callback=${callbackName}`;
     let asyncScriptOnLoadCalled = false;
     const asyncScriptOnLoadSpy = () => {
       asyncScriptOnLoadCalled = true;
     };
+    // eslint-disable-next-line no-unused-vars
     const ComponentWrapper = makeAsyncScriptLoader(URL, {
       callbackName
     })(MockedComponent);
@@ -286,10 +286,10 @@ describe("AsyncScriptLoader", () => {
     window[callbackName]();
     expect(asyncScriptOnLoadCalled).toEqual(true);
     delete window[callbackName];
-  })
+  });
 
   it("should call loaded only once if global callback then onload", () => {
-    const callbackName = 'exampleCallbackThenOnload';
+    const callbackName = "exampleCallbackThenOnload";
     const URL = `http://example.com/?callback=${callbackName}`;
     let asyncScriptOnLoadCalled = false;
     let callCount = 0;
@@ -297,6 +297,7 @@ describe("AsyncScriptLoader", () => {
       asyncScriptOnLoadCalled = true;
       callCount++;
     };
+    // eslint-disable-next-line no-unused-vars
     const ComponentWrapper = makeAsyncScriptLoader(URL, {
       callbackName
     })(MockedComponent);
@@ -309,10 +310,10 @@ describe("AsyncScriptLoader", () => {
     documentLoadScript(URL);
     expect(callCount).toEqual(1);
     delete window[callbackName];
-  })
+  });
 
   it("should call loaded only once if onload then global callback", () => {
-    const callbackName = 'exampleOnloadThenCallback';
+    const callbackName = "exampleOnloadThenCallback";
     const URL = `http://example.com/?callback=${callbackName}`;
     let asyncScriptOnLoadCalled = false;
     let callCount = 0;
@@ -320,6 +321,7 @@ describe("AsyncScriptLoader", () => {
       asyncScriptOnLoadCalled = true;
       callCount++;
     };
+    // eslint-disable-next-line no-unused-vars
     const ComponentWrapper = makeAsyncScriptLoader(URL, {
       callbackName
     })(MockedComponent);
@@ -332,5 +334,5 @@ describe("AsyncScriptLoader", () => {
     window[callbackName]();
     expect(callCount).toEqual(1);
     delete window[callbackName];
-  })
+  });
 });
