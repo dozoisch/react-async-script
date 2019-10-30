@@ -254,4 +254,19 @@ describe("AsyncScriptLoader", () => {
     expect(instance._internalRef.current.internalCallsACallback).toBeTruthy();
     instance._internalRef.current.internalCallsACallback(done);
   });
+
+  it("should expose global callback", () => {
+    const callbackName = 'exampleCallback';
+    const URL = `http://example.com/?callback=${callbackName}`;
+    // eslint-disable-next-line no-unused-vars
+    const ComponentWrapper = makeAsyncScriptLoader(URL, {
+      callbackName
+    })(MockedComponent);
+    ReactTestUtils.renderIntoDocument(
+      <ComponentWrapper />
+    );
+
+    expect(typeof window[callbackName]).toBe('function');
+    delete window[callbackName];
+  })
 });
