@@ -94,6 +94,11 @@ export default function makeAsyncScript(getScriptURL, options) {
 
         script.src = scriptURL;
         script.async = true;
+
+        for (let attribute in options.attributes) {
+          script.setAttribute( attribute, options.attributes[attribute] )
+        }
+
         if (scriptId) {
           script.id = scriptId;
         }

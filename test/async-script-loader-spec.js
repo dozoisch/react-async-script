@@ -133,6 +133,22 @@ describe("AsyncScriptLoader", () => {
     expect(script.id).toEqual(scriptId);
   });
 
+  it("should add attributes to the script tag", () => {
+    const URL = "http://example.com/?has_attributes=true";
+    const attributes = { "data-foo": "bar", foo2: "bar2" };
+
+    // eslint-disable-next-line no-unused-vars
+    const ComponentWrapper = makeAsyncScriptLoader(URL, { attributes })(
+      MockedComponent
+    );
+    ReactTestUtils.renderIntoDocument(<ComponentWrapper />);
+
+    expect(hasScript(URL)).toEqual(true);
+    const script = getScript(URL);
+    expect(script.getAttribute("data-foo")).toEqual("bar");
+    expect(script.getAttribute("foo2")).toEqual("bar2");
+  });
+
   it("should expose statics", done => {
     class MockedComponentWithStatic extends React.Component {
       static callsACallback(fn) {
