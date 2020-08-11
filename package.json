@@ -30,26 +30,24 @@
   },
   "homepage": "https://github.com/dozoisch/react-async-script",
   "devDependencies": {
-    "@babel/cli": "^7.6.4",
-    "@babel/core": "^7.6.4",
-    "@babel/preset-env": "^7.6.3",
-    "@babel/preset-react": "^7.6.3",
-    "@babel/register": "^7.6.2",
-    "babel-eslint": "^10.0.3",
-    "eslint": "6.6.0",
-    "eslint-config-prettier": "6.4.0",
-    "eslint-plugin-prettier": "3.1.1",
-    "jest": "^24.9.0",
-    "prettier": "^1.18.2",
-    "react": "^16.11.0",
-    "react-dom": "^16.11.0",
-    "react-is": "^16.11.0"
+    "@babel/cli": "^7.10.5",
+    "@babel/core": "^7.11.1",
+    "@babel/preset-env": "^7.11.0",
+    "@babel/preset-react": "^7.10.4",
+    "eslint": "7.6.0",
+    "eslint-config-prettier": "6.11.0",
+    "eslint-plugin-prettier": "3.1.4",
+    "jest": "^26.3.0",
+    "prettier": "^1.19.1",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-is": "^16.13.1"
   },
   "peerDependencies": {
     "react": ">=16.4.1"
   },
   "dependencies": {
-    "hoist-non-react-statics": "^3.3.0",
+    "hoist-non-react-statics": "^3.3.2",
     "prop-types": "^15.5.0"
   }
 }
