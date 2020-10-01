@@ -1,7 +1,15 @@
+v1.2.0 - Mon Jun 22 2020 15:36:00 PST
+--------------------------------------
+
+- Added support for optional attributes that can be added to the generated script tag [(#52)](https://github.com/dozoisch/react-async-script/pull/52)
+- Update various dependencies (notably babel/react) [(#48)](https://github.com/dozoisch/react-async-script/pull/48)
+
+
 v1.1.1 - Sun Jul 14 2019 11:14:00 PST
 --------------------------------------
 
 - Add node 12 to build [(#46)](https://github.com/dozoisch/react-async-script/pull/46)
+
 
 
 v1.1.0 - Sun Jul 14 2019 10:19:00 PST

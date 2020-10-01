@@ -15,6 +15,7 @@ A React HOC for loading 3rd party scripts asynchronously. This HOC allows you to
 - `Component`: The *Component* to wrap.
 - `getScriptUrl`: *string* or *function* that returns the full URL of the script tag.
 - `options` *(optional)*:
+    - `attributes`: *object* : If the script needs attributes (such as `data-` attributes), then provide them as key/value pairs of strings and they will be added to the generated script tag.
     - `callbackName`: *string* : If the script needs to call a global function when finished loading *(for example: `recaptcha/api.js?onload=callbackName`)*. Please provide the callback name here and it will be autoregistered on `window` for you.
     - `globalName`: *string* : Can provide the name of the global that the script attaches to `window`. Async-script will pass this as a prop to the wrapped component. *(`props[globalName] = window[globalName]`)*
     - `removeOnUnmount`: *boolean* **default=false** : If set to `true` removes the script tag when component unmounts.
