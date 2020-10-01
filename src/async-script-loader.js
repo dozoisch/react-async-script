@@ -51,7 +51,7 @@ export default function makeAsyncScript(getScriptURL, options) {
         if (!mapEntry.loaded) {
           mapEntry.loaded = true;
         }
-        this.callObserverFuncAndRemoveObserver(mapEntry, observer => {
+        this.callObserverFuncAndRemoveObserver(mapEntry, (observer) => {
           observer(mapEntry);
           return true;
         });
@@ -89,7 +89,7 @@ export default function makeAsyncScript(getScriptURL, options) {
             return;
           }
           // if still loading then callback to observer queue
-          entry.observers[key] = entry =>
+          entry.observers[key] = (entry) =>
             this.asyncScriptLoaderHandleLoad(entry);
           return;
         }
@@ -100,10 +100,10 @@ export default function makeAsyncScript(getScriptURL, options) {
          * setup script to load and observers
          */
         let observers = {};
-        observers[key] = entry => this.asyncScriptLoaderHandleLoad(entry);
+        observers[key] = (entry) => this.asyncScriptLoaderHandleLoad(entry);
         SCRIPT_MAP[scriptURL] = {
           loaded: false,
-          observers
+          observers,
         };
 
         let script = document.createElement("script");
@@ -131,7 +131,7 @@ export default function makeAsyncScript(getScriptURL, options) {
               return;
             }
             mapEntry.loaded = true;
-            this.callObserverFuncAndRemoveObserver(mapEntry, observer => {
+            this.callObserverFuncAndRemoveObserver(mapEntry, (observer) => {
               observer(mapEntry);
               return true;
             });
@@ -141,7 +141,7 @@ export default function makeAsyncScript(getScriptURL, options) {
           let mapEntry = SCRIPT_MAP[scriptURL];
           if (mapEntry) {
             mapEntry.errored = true;
-            this.callObserverFuncAndRemoveObserver(mapEntry, observer => {
+            this.callObserverFuncAndRemoveObserver(mapEntry, (observer) => {
               observer(mapEntry);
               return true;
             });
@@ -197,7 +197,7 @@ export default function makeAsyncScript(getScriptURL, options) {
     });
     ForwardedComponent.displayName = `AsyncScriptLoader(${wrappedComponentName})`;
     ForwardedComponent.propTypes = {
-      asyncScriptOnLoad: PropTypes.func
+      asyncScriptOnLoad: PropTypes.func,
     };
 
     return hoistStatics(ForwardedComponent, WrappedComponent);
