@@ -125,8 +125,8 @@ Pre `1.0.0` and - `React < React@16.4.1` support details in [0.11.1](https://git
 
 ---
 
-[travis.img]: https://travis-ci.org/dozoisch/react-async-script.svg?branch=master
-[travis.url]: https://travis-ci.org/dozoisch/react-async-script
+[travis.img]: https://travis-ci.com/dozoisch/react-async-script.svg?branch=master
+[travis.url]: https://travis-ci.com/dozoisch/react-async-script
 [npm.img]: https://badge.fury.io/js/react-async-script.svg
 [npm.url]: http://badge.fury.io/js/react-async-script
 [npm.dl.img]: https://img.shields.io/npm/dm/react-async-script.svg
