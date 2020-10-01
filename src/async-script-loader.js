@@ -45,13 +45,29 @@ export default function makeAsyncScript(getScriptURL, options) {
 
       asyncScriptLoaderTriggerOnScriptLoaded() {
         let mapEntry = SCRIPT_MAP[this.__scriptURL];
-        if (!mapEntry || !mapEntry.loaded) {
+        if (!mapEntry) {
           throw new Error("Script is not loaded.");
         }
-        for (let obsKey in mapEntry.observers) {
-          mapEntry.observers[obsKey](mapEntry);
+        if (!mapEntry.loaded) {
+          mapEntry.loaded = true;
         }
+        this.callObserverFuncAndRemoveObserver(mapEntry, observer => {
+          observer(mapEntry);
+          return true;
+        });
         delete window[options.callbackName];
+      }
+
+      callObserverFuncAndRemoveObserver(mapEntry, func) {
+        if (mapEntry) {
+          let observersMap = mapEntry.observers;
+
+          for (let obsKey in observersMap) {
+            if (func(observersMap[obsKey])) {
+              delete observersMap[obsKey];
+            }
+          }
+        }
       }
 
       componentDidMount() {
@@ -103,19 +119,6 @@ export default function makeAsyncScript(getScriptURL, options) {
           script.id = scriptId;
         }
 
-        let callObserverFuncAndRemoveObserver = func => {
-          if (SCRIPT_MAP[scriptURL]) {
-            let mapEntry = SCRIPT_MAP[scriptURL];
-            let observersMap = mapEntry.observers;
-
-            for (let obsKey in observersMap) {
-              if (func(observersMap[obsKey])) {
-                delete observersMap[obsKey];
-              }
-            }
-          }
-        };
-
         if (callbackName && typeof window !== "undefined") {
           window[callbackName] = () =>
             this.asyncScriptLoaderTriggerOnScriptLoaded();
@@ -124,11 +127,11 @@ export default function makeAsyncScript(getScriptURL, options) {
         script.onload = () => {
           let mapEntry = SCRIPT_MAP[scriptURL];
           if (mapEntry) {
+            if (mapEntry.loaded) {
+              return;
+            }
             mapEntry.loaded = true;
-            callObserverFuncAndRemoveObserver(observer => {
-              if (callbackName) {
-                return false;
-              }
+            this.callObserverFuncAndRemoveObserver(mapEntry, observer => {
               observer(mapEntry);
               return true;
             });
@@ -138,7 +141,7 @@ export default function makeAsyncScript(getScriptURL, options) {
           let mapEntry = SCRIPT_MAP[scriptURL];
           if (mapEntry) {
             mapEntry.errored = true;
-            callObserverFuncAndRemoveObserver(observer => {
+            this.callObserverFuncAndRemoveObserver(mapEntry, observer => {
               observer(mapEntry);
               return true;
             });
