@@ -20,14 +20,14 @@ const getScript = (URL, toBoolean = false) => {
   return toBoolean ? false : undefined;
 };
 
-const hasScript = URL => getScript(URL, true);
+const hasScript = (URL) => getScript(URL, true);
 
-const documentLoadScript = URL => {
+const documentLoadScript = (URL) => {
   const script = getScript(URL);
   script.onload();
 };
 
-const documentErrorScript = URL => {
+const documentErrorScript = (URL) => {
   const script = getScript(URL);
   script.onerror();
 };
@@ -42,7 +42,7 @@ describe("AsyncScriptLoader", () => {
     let asyncScriptOnLoadCalled = false;
     let scriptErrored = false;
     let scriptLoaded = false;
-    const asyncScriptOnLoadSpy = entry => {
+    const asyncScriptOnLoadSpy = (entry) => {
       scriptLoaded = entry.loaded;
       scriptErrored = entry.errored;
       asyncScriptOnLoadCalled = true;
@@ -70,7 +70,7 @@ describe("AsyncScriptLoader", () => {
     let asyncScriptOnLoadCalled = false;
     let scriptErrored = false;
     let scriptLoaded = false;
-    const asyncScriptOnLoadSpy = entry => {
+    const asyncScriptOnLoadSpy = (entry) => {
       scriptErrored = entry.errored;
       scriptLoaded = entry.loaded;
       asyncScriptOnLoadCalled = true;
@@ -98,7 +98,7 @@ describe("AsyncScriptLoader", () => {
     };
     // eslint-disable-next-line no-unused-vars
     const ComponentWrapper = makeAsyncScriptLoader(URL, {
-      globalName: globalName
+      globalName: globalName,
     })(MockedComponent);
     ReactTestUtils.renderIntoDocument(
       <ComponentWrapper asyncScriptOnLoad={asyncScriptOnLoadSpy} />
@@ -149,7 +149,7 @@ describe("AsyncScriptLoader", () => {
     expect(script.getAttribute("foo2")).toEqual("bar2");
   });
 
-  it("should expose statics", done => {
+  it("should expose statics", (done) => {
     class MockedComponentWithStatic extends React.Component {
       static callsACallback(fn) {
         fn();
@@ -187,7 +187,7 @@ describe("AsyncScriptLoader", () => {
     const URL = "http://example.com/?removeOnUnmount=true";
     // eslint-disable-next-line no-unused-vars
     const ComponentWrapper = makeAsyncScriptLoader(URL, {
-      removeOnUnmount: true
+      removeOnUnmount: true,
     })(MockedComponent);
     const instance = ReactTestUtils.renderIntoDocument(
       <div>
@@ -203,7 +203,7 @@ describe("AsyncScriptLoader", () => {
     expect(hasScript(URL)).toEqual(false);
   });
 
-  it("should allow you to access methods on the wrappedComponent via ref callback", done => {
+  it("should allow you to access methods on the wrappedComponent via ref callback", (done) => {
     // internal component with method we want access to
     class InternalComponent extends React.Component {
       internalCallsACallback(fn) {
@@ -223,7 +223,7 @@ describe("AsyncScriptLoader", () => {
       render() {
         return (
           <div>
-            <ComponentWrapper ref={r => (this._internalRef = r)} />
+            <ComponentWrapper ref={(r) => (this._internalRef = r)} />
           </div>
         );
       }
@@ -235,7 +235,7 @@ describe("AsyncScriptLoader", () => {
     instance._internalRef.internalCallsACallback(done);
   });
 
-  it("should allow you to access methods on the wrappedComponent via createRef", done => {
+  it("should allow you to access methods on the wrappedComponent via createRef", (done) => {
     // internal component with method we want access to
     class InternalComponent extends React.Component {
       internalCallsACallback(fn) {
@@ -276,7 +276,7 @@ describe("AsyncScriptLoader", () => {
     const URL = `http://example.com/?callback=${callbackName}`;
     // eslint-disable-next-line no-unused-vars
     const ComponentWrapper = makeAsyncScriptLoader(URL, {
-      callbackName
+      callbackName,
     })(MockedComponent);
     ReactTestUtils.renderIntoDocument(<ComponentWrapper />);
 
@@ -293,7 +293,7 @@ describe("AsyncScriptLoader", () => {
     };
     // eslint-disable-next-line no-unused-vars
     const ComponentWrapper = makeAsyncScriptLoader(URL, {
-      callbackName
+      callbackName,
     })(MockedComponent);
     ReactTestUtils.renderIntoDocument(
       <ComponentWrapper asyncScriptOnLoad={asyncScriptOnLoadSpy} />
@@ -315,7 +315,7 @@ describe("AsyncScriptLoader", () => {
     };
     // eslint-disable-next-line no-unused-vars
     const ComponentWrapper = makeAsyncScriptLoader(URL, {
-      callbackName
+      callbackName,
     })(MockedComponent);
     ReactTestUtils.renderIntoDocument(
       <ComponentWrapper asyncScriptOnLoad={asyncScriptOnLoadSpy} />
@@ -339,7 +339,7 @@ describe("AsyncScriptLoader", () => {
     };
     // eslint-disable-next-line no-unused-vars
     const ComponentWrapper = makeAsyncScriptLoader(URL, {
-      callbackName
+      callbackName,
     })(MockedComponent);
     ReactTestUtils.renderIntoDocument(
       <ComponentWrapper asyncScriptOnLoad={asyncScriptOnLoadSpy} />
