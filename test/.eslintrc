@@ -2,11 +2,5 @@
   "env": {
     "jest": true,
     "node": true
-  },
-  "globals": {
-    "assert": true
-  },
-  "rules": {
-    "react/no-find-dom-node": 1
   }
 }

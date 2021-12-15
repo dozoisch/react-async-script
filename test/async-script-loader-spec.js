@@ -1,6 +1,5 @@
 import React from "react";
-import ReactDOM from "react-dom";
-import ReactTestUtils from "react-dom/test-utils";
+import { render, fireEvent, act } from "@testing-library/react";
 import * as ReactIs from "react-is";
 import makeAsyncScriptLoader from "../src/async-script-loader";
 
@@ -24,12 +23,12 @@ const hasScript = (URL) => getScript(URL, true);
 
 const documentLoadScript = (URL) => {
   const script = getScript(URL);
-  script.onload();
+  fireEvent.load(script);
 };
 
 const documentErrorScript = (URL) => {
   const script = getScript(URL);
-  script.onerror();
+  fireEvent.error(script);
 };
 
 describe("AsyncScriptLoader", () => {
@@ -52,9 +51,7 @@ describe("AsyncScriptLoader", () => {
     expect(ComponentWrapper.displayName).toEqual(
       "AsyncScriptLoader(MockedComponent)"
     );
-    ReactTestUtils.renderIntoDocument(
-      <ComponentWrapper asyncScriptOnLoad={asyncScriptOnLoadSpy} />
-    );
+    render(<ComponentWrapper asyncScriptOnLoad={asyncScriptOnLoadSpy} />);
     documentLoadScript(URL);
 
     expect(ReactIs.isValidElementType(ComponentWrapper)).toEqual(true);
@@ -77,9 +74,7 @@ describe("AsyncScriptLoader", () => {
     };
     // eslint-disable-next-line no-unused-vars
     const ComponentWrapper = makeAsyncScriptLoader(URL)(MockedComponent);
-    ReactTestUtils.renderIntoDocument(
-      <ComponentWrapper asyncScriptOnLoad={asyncScriptOnLoadSpy} />
-    );
+    render(<ComponentWrapper asyncScriptOnLoad={asyncScriptOnLoadSpy} />);
     documentErrorScript(URL);
 
     expect(hasScript(URL)).toEqual(true);
@@ -100,9 +95,7 @@ describe("AsyncScriptLoader", () => {
     const ComponentWrapper = makeAsyncScriptLoader(URL, {
       globalName: globalName,
     })(MockedComponent);
-    ReactTestUtils.renderIntoDocument(
-      <ComponentWrapper asyncScriptOnLoad={asyncScriptOnLoadSpy} />
-    );
+    render(<ComponentWrapper asyncScriptOnLoad={asyncScriptOnLoadSpy} />);
 
     expect(hasScript(URL)).toEqual(false);
     expect(asyncScriptOnLoadCalled).toEqual(true);
@@ -113,7 +106,7 @@ describe("AsyncScriptLoader", () => {
     const URL = "http://example.com/?url=function";
     // eslint-disable-next-line no-unused-vars
     const ComponentWrapper = makeAsyncScriptLoader(() => URL)(MockedComponent);
-    ReactTestUtils.renderIntoDocument(<ComponentWrapper />);
+    render(<ComponentWrapper />);
 
     expect(hasScript(URL)).toEqual(true);
   });
@@ -126,7 +119,7 @@ describe("AsyncScriptLoader", () => {
     const ComponentWrapper = makeAsyncScriptLoader(URL, { scriptId })(
       MockedComponent
     );
-    ReactTestUtils.renderIntoDocument(<ComponentWrapper />);
+    render(<ComponentWrapper />);
 
     expect(hasScript(URL)).toEqual(true);
     const script = getScript(URL);
@@ -141,7 +134,7 @@ describe("AsyncScriptLoader", () => {
     const ComponentWrapper = makeAsyncScriptLoader(URL, { attributes })(
       MockedComponent
     );
-    ReactTestUtils.renderIntoDocument(<ComponentWrapper />);
+    render(<ComponentWrapper />);
 
     expect(hasScript(URL)).toEqual(true);
     const script = getScript(URL);
@@ -169,17 +162,14 @@ describe("AsyncScriptLoader", () => {
     const URL = "http://example.com/?removeOnUnmount=notset";
     // eslint-disable-next-line no-unused-vars
     const ComponentWrapper = makeAsyncScriptLoader(URL)(MockedComponent);
-    const instance = ReactTestUtils.renderIntoDocument(
+    const { unmount } = render(
       <div>
         <ComponentWrapper />
       </div>
     );
 
     expect(hasScript(URL)).toEqual(true);
-    const unmounted = ReactDOM.unmountComponentAtNode(
-      ReactDOM.findDOMNode(instance).parentNode
-    );
-    expect(unmounted).toEqual(true);
+    unmount();
     expect(hasScript(URL)).toEqual(true);
   });
 
@@ -189,17 +179,15 @@ describe("AsyncScriptLoader", () => {
     const ComponentWrapper = makeAsyncScriptLoader(URL, {
       removeOnUnmount: true,
     })(MockedComponent);
-    const instance = ReactTestUtils.renderIntoDocument(
+
+    const { unmount } = render(
       <div>
         <ComponentWrapper />
       </div>
     );
 
     expect(hasScript(URL)).toEqual(true);
-    const unmounted = ReactDOM.unmountComponentAtNode(
-      ReactDOM.findDOMNode(instance).parentNode
-    );
-    expect(unmounted).toEqual(true);
+    unmount();
     expect(hasScript(URL)).toEqual(false);
   });
 
@@ -228,11 +216,15 @@ describe("AsyncScriptLoader", () => {
         );
       }
     }
-    const instance = ReactTestUtils.renderIntoDocument(<WrappingComponent />);
+
+    const wrappingRef = React.createRef();
+    render(<WrappingComponent ref={wrappingRef} />);
 
     expect(hasScript(URL)).toEqual(true);
-    expect(instance._internalRef.internalCallsACallback).toBeTruthy();
-    instance._internalRef.internalCallsACallback(done);
+    expect(
+      wrappingRef.current._internalRef.internalCallsACallback
+    ).toBeTruthy();
+    wrappingRef.current._internalRef.internalCallsACallback(done);
   });
 
   it("should allow you to access methods on the wrappedComponent via createRef", (done) => {
@@ -264,11 +256,14 @@ describe("AsyncScriptLoader", () => {
         );
       }
     }
-    const instance = ReactTestUtils.renderIntoDocument(<WrappingComponent />);
+    const wrappingRef = React.createRef();
+    render(<WrappingComponent ref={wrappingRef} />);
 
     expect(hasScript(URL)).toEqual(true);
-    expect(instance._internalRef.current.internalCallsACallback).toBeTruthy();
-    instance._internalRef.current.internalCallsACallback(done);
+    expect(
+      wrappingRef.current._internalRef.current.internalCallsACallback
+    ).toBeTruthy();
+    wrappingRef.current._internalRef.current.internalCallsACallback(done);
   });
 
   it("should expose global callback", () => {
@@ -278,7 +273,7 @@ describe("AsyncScriptLoader", () => {
     const ComponentWrapper = makeAsyncScriptLoader(URL, {
       callbackName,
     })(MockedComponent);
-    ReactTestUtils.renderIntoDocument(<ComponentWrapper />);
+    render(<ComponentWrapper />);
 
     expect(typeof window[callbackName]).toBe("function");
     delete window[callbackName];
@@ -295,11 +290,11 @@ describe("AsyncScriptLoader", () => {
     const ComponentWrapper = makeAsyncScriptLoader(URL, {
       callbackName,
     })(MockedComponent);
-    ReactTestUtils.renderIntoDocument(
-      <ComponentWrapper asyncScriptOnLoad={asyncScriptOnLoadSpy} />
-    );
+    render(<ComponentWrapper asyncScriptOnLoad={asyncScriptOnLoadSpy} />);
 
-    window[callbackName]();
+    act(() => {
+      window[callbackName]();
+    });
     expect(asyncScriptOnLoadCalled).toEqual(true);
     delete window[callbackName];
   });
@@ -317,11 +312,11 @@ describe("AsyncScriptLoader", () => {
     const ComponentWrapper = makeAsyncScriptLoader(URL, {
       callbackName,
     })(MockedComponent);
-    ReactTestUtils.renderIntoDocument(
-      <ComponentWrapper asyncScriptOnLoad={asyncScriptOnLoadSpy} />
-    );
+    render(<ComponentWrapper asyncScriptOnLoad={asyncScriptOnLoadSpy} />);
 
-    window[callbackName]();
+    act(() => {
+      window[callbackName]();
+    });
     expect(asyncScriptOnLoadCalled).toEqual(true);
     documentLoadScript(URL);
     expect(callCount).toEqual(1);
@@ -341,9 +336,7 @@ describe("AsyncScriptLoader", () => {
     const ComponentWrapper = makeAsyncScriptLoader(URL, {
       callbackName,
     })(MockedComponent);
-    ReactTestUtils.renderIntoDocument(
-      <ComponentWrapper asyncScriptOnLoad={asyncScriptOnLoadSpy} />
-    );
+    render(<ComponentWrapper asyncScriptOnLoad={asyncScriptOnLoadSpy} />);
 
     documentLoadScript(URL);
     expect(asyncScriptOnLoadCalled).toEqual(true);
