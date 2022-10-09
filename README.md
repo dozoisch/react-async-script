@@ -2,8 +2,6 @@
 
 [![Build Status][ci.img]][ci.url] [![npm version][npm.img]][npm.url] [![npm downloads][npm.dl.img]][npm.dl.url]
 
-**NOTE* - These are the docs for the upcoming `1.0.0` release - for `v0.11.1` documention go to tag here: [0.11.1](https://github.com/dozoisch/react-async-script/tree/v0.11.1)
-
 A React HOC for loading 3rd party scripts asynchronously. This HOC allows you to wrap a component that needs 3rd party resources, like reCAPTCHA or Google Maps, and have them load the script asynchronously.
 
 ## Usage
@@ -121,7 +119,7 @@ React.render(
 
 ## Notes
 
-Pre `1.0.0` and - `React < React@16.4.1` support details in [0.11.1](https://github.com/dozoisch/react-async-script/tree/v0.11.1).
+For pre `1.0.0` and React versions before 16.4.1 support, see details in [0.11.1](https://github.com/dozoisch/react-async-script/tree/v0.11.1).
 
 ---
 
