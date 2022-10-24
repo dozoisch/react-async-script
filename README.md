@@ -98,29 +98,6 @@ React.render(
 );
 ```
 
-## Migration to 1.0
-
-- Component is now passed as a second function call
-- removeOnMount is now removeOnUnmount (typo fixed!)
-- exposeFuncs is no longer needed as it's done automatically!
-
-```diff
--export default makeAsyncScriptLoader(ReCAPTCHA, getURL, {
-+export default makeAsyncScriptLoader(getURL, {
-   callbackName,
-   globalName,
--  removeOnMount: initialOptions.removeOnMount || false,
-+  removeOnUnmount: initialOptions.removeOnUnmount || false,
--  exposeFuncs: ["getValue", "getWidgetId", "reset", "execute"],
--});
-+})(ReCAPTCHA);
-```
-
-
-## Notes
-
-For pre `1.0.0` and React versions before 16.4.1 support, see details in [0.11.1](https://github.com/dozoisch/react-async-script/tree/v0.11.1).
-
 ---
 
 [ci.img]: https://github.com/dozoisch/react-async-script/actions/workflows/standard-ci.yml/badge.svg?branch=master
